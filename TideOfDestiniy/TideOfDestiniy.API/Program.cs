@@ -24,6 +24,7 @@ namespace TideOfDestiniy.API
 
             //Add Services
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IAuthorization, Authorization>();
             //Add Repositories
             builder.Services.AddScoped<IUserRepo, UserRepo>();
 

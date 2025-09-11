@@ -51,7 +51,7 @@ namespace TideOfDestiniy.API.Controllers
             }
 
             // Trả về token cho client
-            return Ok(new { token = result.Token });
+            return Ok(new { message = "Login Successful" ,token = result.Token });
         }
     }
 }

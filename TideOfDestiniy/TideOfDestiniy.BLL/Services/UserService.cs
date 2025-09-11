@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using TideOfDestiniy.BLL.DTOs;
@@ -14,10 +15,12 @@ namespace TideOfDestiniy.BLL.Services
     public class UserService : IUserService
     {
         private IUserRepo _userRepo;
+        private IAuthorization _authorization;
 
-        public UserService(IUserRepo userRepo)
+        public UserService(IUserRepo userRepo, IAuthorization authorization)
         {
             _userRepo = userRepo;
+            _authorization = authorization;
         }
         public async Task<AuthResultDTO?> LoginAsync(LoginDTO loginDto)
         {
@@ -29,7 +32,7 @@ namespace TideOfDestiniy.BLL.Services
             }
 
             // TODO: Tạo JWT Token ở đây
-            string token = GenerateJwtToken(user); // Đây là hàm sẽ tạo token
+            string token = _authorization.CreateAccessToken(user); // Đây là hàm sẽ tạo token
 
             return new AuthResultDTO { Succeeded = true, Message = "Login successful.", Token = token };
 
@@ -64,15 +67,6 @@ namespace TideOfDestiniy.BLL.Services
         public Task<bool> UserExistsAsync(string username)
         {
             throw new NotImplementedException();
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            // Logic tạo JWT Token sẽ được thêm vào đây.
-            // Sẽ cần một secret key từ appsettings.json, thông tin user (Id, Username, Role)
-            // và sử dụng thư viện System.IdentityModel.Tokens.Jwt.
-
-            return $"FAKE_JWT_TOKEN_FOR_USER_{user.Username}";
         }
 
     }
