@@ -68,6 +68,8 @@ namespace TideOfDestiniy.API
 
             app.UseHttpsRedirection();
 
+            app.UseCors(MyAllowSpecificOrigins);
+
             app.UseAuthorization();
 
 
