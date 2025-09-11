@@ -1,4 +1,4 @@
-
+﻿
 using Microsoft.EntityFrameworkCore;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.BLL.Services;
@@ -13,6 +13,10 @@ namespace TideOfDestiniy.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // ====> ĐỊNH NGHĨA TÊN POLICY <====
+            var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+            // ===================================
 
             // Add services to the container.
 
@@ -34,6 +38,25 @@ namespace TideOfDestiniy.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
+            // ====> THÊM DỊCH VỤ CORS VÀO CONTAINER <====
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  policy =>
+                                  {
+                                      var origins = builder.Configuration.GetValue<string>("CorsOrigins");
+                                      if (!string.IsNullOrEmpty(origins))
+                                      {
+                                          policy.WithOrigins(origins.Split(',')) // Tách chuỗi thành mảng các origin
+                                                .AllowAnyHeader()
+                                                .AllowAnyMethod();
+                                      }
+                                  });
+            });
+            // ===============================================
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -44,6 +67,8 @@ namespace TideOfDestiniy.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
 
