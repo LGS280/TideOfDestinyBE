@@ -30,7 +30,6 @@ namespace TideOfDestiniy.BLL.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Subject = User ID
                 new Claim(JwtRegisteredClaimNames.Name, user.Username), // Name = Username
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // JWT ID, unique cho mỗi token
             };
 
@@ -56,8 +55,6 @@ namespace TideOfDestiniy.BLL.Services
                 Subject = new ClaimsIdentity(claims),
                 Expires = tokenExpiration,
                 SigningCredentials = creds,
-                Issuer = _configuration["JwtSettings:Issuer"],
-                Audience = _configuration["JwtSettings:Audience"]
             };
 
             // Tạo và ghi token
