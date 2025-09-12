@@ -11,7 +11,7 @@ namespace TideOfDestiniy.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class NewsController : ControllerBase
     {
         private INewsService _newsService;

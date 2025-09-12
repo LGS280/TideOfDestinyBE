@@ -48,19 +48,9 @@ namespace TideOfDestiniy.DAL.Repositories
 
         public async Task<bool> UpdateNewsAsync(News news)
         {
-            var existingNews = await _context.News.FindAsync(news.Id);
-            if (existingNews == null) return false;
-
-            existingNews.Title = news.Title;
-            existingNews.Content = news.Content;
-            existingNews.ImageUrl = news.ImageUrl;
-            existingNews.Version = news.Version;
-            existingNews.PublishedAt = news.PublishedAt;
-            existingNews.AuthorId = news.AuthorId;
+            _context.Update(news);
             await _context.SaveChangesAsync();
             return true;
-
-            throw new NotImplementedException();
         }
     }
 }

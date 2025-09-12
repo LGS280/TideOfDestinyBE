@@ -82,19 +82,20 @@ namespace TideOfDestiniy.BLL.Services
 
         public async Task<AuthResultDTO> UpdateNewsAsync(UpdateNewsDTO newsDTO, Guid id)
         {
-            var news = _newsRepo.GetNewsByIdAsync(id);
+            var news = await _newsRepo.GetNewsByIdAsync(id);
             if (news == null)
             {
                 return new AuthResultDTO { Succeeded = false, Message = "News not found." };
             }
 
-            await _newsRepo.UpdateNewsAsync(new News
+            news.Title = newsDTO.Title;
+            news.Content = newsDTO.Content;
+
+            var update = await _newsRepo.UpdateNewsAsync(news);
+            if (!update)
             {
-                Title = newsDTO.Title,
-                Content = newsDTO.Content,
-                PublishedAt = newsDTO.PublishedAt,
-                AuthorId = newsDTO.AuthorId,
-            });
+                return new AuthResultDTO { Succeeded = false, Message = "Failed to update news." };
+            }
 
             return new AuthResultDTO { Succeeded = true, Message = "News updated successfully." };
         }
