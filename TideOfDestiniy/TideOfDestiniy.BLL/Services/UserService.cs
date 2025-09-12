@@ -22,6 +22,20 @@ namespace TideOfDestiniy.BLL.Services
             _userRepo = userRepo;
             _authorization = authorization;
         }
+
+        public async Task<List<UserDTO>?> GetUserAsync()
+        {
+            var users = await _userRepo.GetUserAsync();
+            if (users == null) return null;
+            return users.Select(u => new UserDTO
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Email = u.Email,
+                Role = u.UserRoles?.Select(ur => ur.Role.RoleName).FirstOrDefault() ?? "NA"
+            }).ToList();   
+        }
+
         public async Task<AuthResultDTO?> LoginAsync(LoginDTO loginDto)
         {
             var user = await _userRepo.LoginAsync(loginDto.Username, loginDto.Password);

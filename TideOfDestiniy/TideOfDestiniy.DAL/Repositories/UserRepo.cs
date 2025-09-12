@@ -19,11 +19,12 @@ namespace TideOfDestiniy.DAL.Repositories
         {
             _context = context;
         }
-        public Task<User?> GetUserByUsernameAsync(string username) => 
-            _context.Users
+
+        public async Task<List<User>?> GetUserAsync() => 
+            await _context.Users
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync(u => u.Username == username);
+                .ToListAsync();
 
         public async Task<User?> LoginAsync(string username, string password)
         {
