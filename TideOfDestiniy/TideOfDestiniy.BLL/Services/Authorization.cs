@@ -28,10 +28,10 @@ namespace TideOfDestiniy.BLL.Services
             // Tạo danh sách các "claims" (thông tin định danh) cho người dùng
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Subject = User ID
+                //new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Subject = User ID
                 new Claim(JwtRegisteredClaimNames.Name, user.Username), // Name = Username
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // JWT ID, unique cho mỗi token
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // JWT ID, unique cho mỗi token
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) //     
             };
 
             // Thêm các role của người dùng vào claims
