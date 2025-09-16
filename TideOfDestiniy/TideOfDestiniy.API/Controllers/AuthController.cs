@@ -53,5 +53,20 @@ namespace TideOfDestiniy.API.Controllers
             // Trả về token cho client
             return Ok(new { message = "Login Successful" ,token = result.Token });
         }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDTO googleLoginDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await (_userService as Authorization)?.LoginWithGoogleAsync(googleLoginDto);
+            if (result == null || !result.Succeeded)
+            {
+                return Unauthorized(new { message = result?.Message ?? "Google login failed." });
+            }
+            return Ok(new { message = "Google login successful.", token = result.Token });
+        }
     }
 }

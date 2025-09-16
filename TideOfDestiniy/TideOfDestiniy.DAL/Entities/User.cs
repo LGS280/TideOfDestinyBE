@@ -27,6 +27,7 @@ namespace TideOfDestiniy.DAL.Entities
 
         // Navigation Properties (Quan hệ)
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public bool EmailConfirmed { get; set; }
         //public ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
 
     }
