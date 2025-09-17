@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -62,10 +63,15 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IAuthorization, Authorization>();
             builder.Services.AddScoped<INewsService, NewsService>();
             builder.Services.AddScoped<ISystemRequirementService, SystemRequirementService>();
+            builder.Services.AddScoped<IUploadService ,UploadService>();
+            builder.Services.AddScoped<IDownloadGameService, DownloadGameService>();
+
+
             //Add Repositories
             builder.Services.AddScoped<IUserRepo, UserRepo>();
             builder.Services.AddScoped<INewsRepo, NewsRepo>();
             builder.Services.AddScoped<ISystemRequirementRepo, SystemRequirementRepo>();
+            builder.Services.AddSingleton<IFileRepo ,FileRepo>();
 
 
             builder.Services.AddControllers();
@@ -118,6 +124,15 @@ namespace TideOfDestiniy.API
                         new string[] {}
                     }
                 });
+            });
+
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = long.MaxValue; // gần như không giới hạn
+            });
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.Limits.MaxRequestBodySize = long.MaxValue; // hoặc set giá trị cụ thể ví dụ 5GB
             });
 
             var app = builder.Build();
