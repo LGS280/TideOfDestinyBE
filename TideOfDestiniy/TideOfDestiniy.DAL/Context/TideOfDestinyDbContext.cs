@@ -78,7 +78,7 @@ namespace TideOfDestiniy.DAL.Context
                 Email = "admin@tideofdestiny.com", // Email của admin
                 EmailConfirmed = true,
                 // DÁN CHUỖI HASH BẠN ĐÃ TẠO Ở BƯỚC 1 VÀO ĐÂY
-                PasswordHash = "$2a$11$N9kGtZLP1n.B.r/sX/LqJ.Hk/iWz.yX2Qz5J1oA1B2c3D4e5F6g7"
+                PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW"
             };
             modelBuilder.Entity<User>().HasData(adminUser);
 
