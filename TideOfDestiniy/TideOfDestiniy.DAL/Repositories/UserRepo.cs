@@ -22,6 +22,12 @@ namespace TideOfDestiniy.DAL.Repositories
 
         public async Task<User> CreateUserAsync(User user)
         {
+            var defaultRole = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == "Player");
+            if (defaultRole != null)
+            {
+                user.UserRoles = new List<UserRole> { new UserRole { Role = defaultRole } };
+            }
+
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;

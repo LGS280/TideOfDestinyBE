@@ -20,6 +20,8 @@ namespace TideOfDestiniy.API
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddEndpointsApiExplorer();
+
 
             // ====> ĐỊNH NGHĨA TÊN POLICY <====
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -62,6 +64,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IAuthorization, Authorization>();
             builder.Services.AddScoped<INewsService, NewsService>();
             builder.Services.AddScoped<ISystemRequirementService, SystemRequirementService>();
+            builder.Services.AddScoped<IAuthService, Authorization>();
             //Add Repositories
             builder.Services.AddScoped<IUserRepo, UserRepo>();
             builder.Services.AddScoped<INewsRepo, NewsRepo>();
@@ -80,13 +83,9 @@ namespace TideOfDestiniy.API
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   policy =>
                                   {
-                                      var origins = builder.Configuration.GetValue<string>("CorsOrigins");
-                                      if (!string.IsNullOrEmpty(origins))
-                                      {
-                                          policy.WithOrigins(origins.Split(',')) // Tách chuỗi thành mảng các origin
-                                                .AllowAnyHeader()
-                                                .AllowAnyMethod();
-                                      }
+                                      policy.AllowAnyOrigin()    // Cho phép TẤT CẢ các origin
+                                            .AllowAnyHeader()   // Cho phép TẤT CẢ các header
+                                            .AllowAnyMethod();  // Cho phép TẤT CẢ các method (GET, POST, PUT, OPTIONS...)
                                   });
             });
             // ===============================================
@@ -129,7 +128,7 @@ namespace TideOfDestiniy.API
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+                //app.UseHttpsRedirection();
 
             app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
