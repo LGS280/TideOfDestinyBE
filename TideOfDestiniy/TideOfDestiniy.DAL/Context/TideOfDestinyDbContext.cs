@@ -60,11 +60,37 @@ namespace TideOfDestiniy.DAL.Context
                 .Property(b => b.Platform)
                 .HasConversion<string>();
 
+
+            const int ADMIN_ROLE_ID = 1;
+            const string PLAYER_ROLE_ID = "f1e2d3c4-b5a6-4f7e-8d9c-0a1b2c3d4e5f";
+            const string ADMIN_USER_ID = "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f";
+
             // (Tùy chọn) Thêm dữ liệu mẫu (Seed data)
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = 1, RoleName = "Admin" },
                 new Role { Id = 2, RoleName = "Player" }
             );
+
+            var adminUser = new User
+            {
+                Id = new Guid(ADMIN_USER_ID),
+                Username = "admin",
+                Email = "admin@tideofdestiny.com", // Email của admin
+                EmailConfirmed = true,
+                // DÁN CHUỖI HASH BẠN ĐÃ TẠO Ở BƯỚC 1 VÀO ĐÂY
+                PasswordHash = "$2a$11$N9kGtZLP1n.B.r/sX/LqJ.Hk/iWz.yX2Qz5J1oA1B2c3D4e5F6g7"
+            };
+            modelBuilder.Entity<User>().HasData(adminUser);
+
+            // 4. Liên kết Admin User với Admin Role
+            modelBuilder.Entity<UserRole>().HasData(
+                new UserRole
+                {
+                    UserId = new Guid(ADMIN_USER_ID),
+                    RoleId = ADMIN_ROLE_ID
+                }
+            );
+
         }
     }
 
