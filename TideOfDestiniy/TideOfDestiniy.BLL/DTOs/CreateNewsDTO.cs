@@ -11,7 +11,7 @@ namespace TideOfDestiniy.BLL.DTOs
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         //public Guid AuthorId { get; set; }
-        //public string? ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
         //public string? Version { get; set; } // Phiên bản game liên quan
     }
 }

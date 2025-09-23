@@ -26,6 +26,7 @@ namespace TideOfDestiniy.BLL.Services
             {
                 Title = newsDTO.Title,
                 Content = newsDTO.Content,
+                ImageUrl = newsDTO.ImageUrl,
                 //PublishedAt = newsDTO.PublishedAt,
                 AuthorId = id,
             };
