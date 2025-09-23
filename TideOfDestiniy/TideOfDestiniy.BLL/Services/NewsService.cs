@@ -59,6 +59,7 @@ namespace TideOfDestiniy.BLL.Services
                 Title = n.Title,
                 Content = n.Content,
                 PublishedAt = n.PublishedAt,
+                ImageUrl = n.ImageUrl,
                 AuthorId = n.AuthorId,
                 Authorname = n.Author != null ? n.Author.Username : "Unknown"
             }).ToList();
