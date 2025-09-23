@@ -39,7 +39,7 @@ namespace TideOfDestiniy.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Player")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateNews([FromBody] CreateNewsDTO newsDTO)
         {
             if (!ModelState.IsValid)
@@ -68,6 +68,7 @@ namespace TideOfDestiniy.API.Controllers
             return Ok(new { message = result.Message });
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateNews(Guid id, [FromBody] UpdateNewsDTO newsDTO)
         {
             if (!ModelState.IsValid)
