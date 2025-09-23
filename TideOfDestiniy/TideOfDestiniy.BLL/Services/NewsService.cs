@@ -76,6 +76,7 @@ namespace TideOfDestiniy.BLL.Services
                 Content = news.Content,
                 PublishedAt = news.PublishedAt,
                 AuthorId = news.AuthorId,
+                ImageUrl = news.ImageUrl,
                 Authorname = news.Author != null ? news.Author.Username : "Unknown"
             };
         }
@@ -90,6 +91,7 @@ namespace TideOfDestiniy.BLL.Services
 
             news.Title = newsDTO.Title;
             news.Content = newsDTO.Content;
+            news.ImageUrl = newsDTO.ImageUrl;
 
             var update = await _newsRepo.UpdateNewsAsync(news);
             if (!update)

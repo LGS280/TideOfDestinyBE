@@ -10,6 +10,7 @@ namespace TideOfDestiniy.BLL.DTOs
     {
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
         //public string Version { get; set; } = string.Empty;
         //public DateTime PublishedAt { get; set; }
         //public Guid AuthorId { get; set; }
