@@ -35,11 +35,22 @@ namespace TideOfDestiniy.DAL.Repositories
             return true;
         }
 
-        public Task<List<News>> GetAllNewsAsync() => 
-            _context.News
-                .Include(n => n.Author)
-                .OrderByDescending(n => n.PublishedAt)
-                .ToListAsync();
+        public async Task<List<News>> GetAllNewsAsync(NewsCategory? newsCategory = null)
+        {
+            var query = _context.News
+                            .Include(n => n.Author)
+                            .AsQueryable();
+
+            if (newsCategory.HasValue)
+            {
+                query = query.Where(n => n.NewsCategory == newsCategory.Value);
+            }
+            
+            return await query
+                            .OrderByDescending(n => n.PublishedAt)
+                            .ToListAsync();
+
+        }
 
         public Task<News?> GetNewsByIdAsync(Guid id) => 
             _context.News

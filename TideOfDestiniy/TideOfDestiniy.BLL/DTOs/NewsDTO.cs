@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TideOfDestiniy.DAL.Entities;
 
 namespace TideOfDestiniy.BLL.DTOs
 {
@@ -15,6 +16,7 @@ namespace TideOfDestiniy.BLL.DTOs
         //public string? Version { get; set; } // Phiên bản game liên quan
         public DateTime PublishedAt { get; set; }
         public Guid AuthorId { get; set; }
+        public NewsCategory NewsCategory { get; set; }
         public string Authorname { get; set; } // Thêm trường này để hiển thị tên tác giả
     }
 }
