@@ -11,7 +11,7 @@ namespace TideOfDestiniy.DAL.Interfaces
     {
         Task<bool> CreateNewsAsync(News news);
         Task<News?> GetNewsByIdAsync(Guid id);
-        Task<List<News>> GetAllNewsAsync();
+        Task<List<News>> GetAllNewsAsync(NewsCategory? newsCategory = null);
         Task<bool> UpdateNewsAsync(News news);
         Task<bool> DeleteNewsAsync(Guid id);
 

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TideOfDestiniy.DAL.Context;
 
+
 #nullable disable
 
 namespace TideOfDestiniy.DAL.Migrations
@@ -73,6 +74,9 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("longtext");
 
+                    b.Property<int>("NewsCategory")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("datetime(6)");
 
@@ -90,6 +94,27 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("News");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f5d1a2b7-3fd0-423c-9151-06db4291c583"),
+                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            Content = "Nhiều tính năng mới và sửa lỗi...",
+                            NewsCategory = 0,
+                            PublishedAt = new DateTime(2025, 9, 24, 12, 35, 59, 690, DateTimeKind.Utc).AddTicks(2472),
+                            Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
+                            Version = "2.5.0"
+                        },
+                        new
+                        {
+                            Id = new Guid("9dbdbeff-8a1a-4209-84dd-04024fbc91bb"),
+                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
+                            NewsCategory = 1,
+                            PublishedAt = new DateTime(2025, 9, 24, 12, 35, 59, 690, DateTimeKind.Utc).AddTicks(2475),
+                            Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
+                        });
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Role", b =>
@@ -214,11 +239,20 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
-                            CreatedAt = new DateTime(2025, 9, 19, 15, 19, 27, 528, DateTimeKind.Utc).AddTicks(2618),
+                            CreatedAt = new DateTime(2025, 9, 24, 12, 35, 59, 690, DateTimeKind.Utc).AddTicks(2393),
                             Email = "admin@tideofdestiny.com",
                             EmailConfirmed = true,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
                             Username = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            CreatedAt = new DateTime(2025, 9, 24, 12, 35, 59, 690, DateTimeKind.Utc).AddTicks(2405),
+                            Email = "player@gmail.com",
+                            EmailConfirmed = true,
+                            PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
+                            Username = "player1"
                         });
                 });
 
@@ -241,6 +275,11 @@ namespace TideOfDestiniy.DAL.Migrations
                         {
                             UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
                             RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            RoleId = 2
                         });
                 });
 

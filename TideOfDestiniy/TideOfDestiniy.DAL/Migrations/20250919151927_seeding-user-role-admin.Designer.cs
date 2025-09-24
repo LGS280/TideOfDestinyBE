@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TideOfDestiniy.DAL.Context;
 
+
 #nullable disable
 
 namespace TideOfDestiniy.DAL.Migrations

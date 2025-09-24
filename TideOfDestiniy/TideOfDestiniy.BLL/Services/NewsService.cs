@@ -26,6 +26,8 @@ namespace TideOfDestiniy.BLL.Services
             {
                 Title = newsDTO.Title,
                 Content = newsDTO.Content,
+                ImageUrl = newsDTO.ImageUrl,
+                NewsCategory = newsDTO.NewsCategory,
                 //PublishedAt = newsDTO.PublishedAt,
                 AuthorId = id,
             };
@@ -49,16 +51,18 @@ namespace TideOfDestiniy.BLL.Services
             return new AuthResultDTO { Succeeded = true, Message = "News deleted successfully." };
         }
 
-        public async Task<List<NewsDTO>> GetAllNewsAsync()
+        public async Task<List<NewsDTO>> GetAllNewsAsync(NewsCategory? category = null)
         {
-            var newsList = await _newsRepo.GetAllNewsAsync();
+            var newsList = await _newsRepo.GetAllNewsAsync(category);
             return newsList.Select(n => new NewsDTO
             {
                 Id = n.Id,
                 Title = n.Title,
                 Content = n.Content,
                 PublishedAt = n.PublishedAt,
+                ImageUrl = n.ImageUrl,
                 AuthorId = n.AuthorId,
+                NewsCategory = n.NewsCategory,
                 Authorname = n.Author != null ? n.Author.Username : "Unknown"
             }).ToList();
         }
@@ -76,6 +80,8 @@ namespace TideOfDestiniy.BLL.Services
                 Content = news.Content,
                 PublishedAt = news.PublishedAt,
                 AuthorId = news.AuthorId,
+                ImageUrl = news.ImageUrl,
+                NewsCategory = news.NewsCategory,
                 Authorname = news.Author != null ? news.Author.Username : "Unknown"
             };
         }
@@ -90,6 +96,8 @@ namespace TideOfDestiniy.BLL.Services
 
             news.Title = newsDTO.Title;
             news.Content = newsDTO.Content;
+            news.ImageUrl = newsDTO.ImageUrl;
+            news.NewsCategory = newsDTO.NewsCategory;
 
             var update = await _newsRepo.UpdateNewsAsync(news);
             if (!update)
