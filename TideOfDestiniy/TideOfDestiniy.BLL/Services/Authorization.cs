@@ -98,7 +98,7 @@ namespace TideOfDestiniy.BLL.Services
                 {
                     Audience = new[] { googleClientId }
                 };
-                var payload = await GoogleJsonWebSignature.ValidateAsync(googleLoginDto.IdToken, validationSettings);
+                var payload = await GoogleJsonWebSignature.ValidateAsync(googleLoginDto.idToken, validationSettings);
 
                 // Bước 2: Tìm hoặc tạo người dùng trong hệ thống của bạn
                 var user = await _userRepo.GetUserByEmailAsync(payload.Email); // Cần tạo hàm này trong Repo

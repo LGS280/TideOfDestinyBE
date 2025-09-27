@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TideOfDestiniy.DAL.Context;
 
@@ -11,9 +12,11 @@ using TideOfDestiniy.DAL.Context;
 namespace TideOfDestiniy.DAL.Migrations
 {
     [DbContext(typeof(TideOfDestinyDbContext))]
-    partial class TideOfDestinyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250927160210_update-user-password-nullable")]
+    partial class updateuserpasswordnullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,21 +100,21 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7cf5e7bc-ac7b-46c9-8aae-94801d653d21"),
+                            Id = new Guid("e1be7317-abdf-4a6a-89d9-f0fecbf8db4c"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Nhiều tính năng mới và sửa lỗi...",
                             NewsCategory = 0,
-                            PublishedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(6043),
+                            PublishedAt = new DateTime(2025, 9, 27, 16, 2, 10, 10, DateTimeKind.Utc).AddTicks(7117),
                             Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
                             Version = "2.5.0"
                         },
                         new
                         {
-                            Id = new Guid("2100788f-4caf-4cf8-a76d-6a7105502304"),
+                            Id = new Guid("57fd4eb0-0e2f-49c1-af4e-7864dee3acd9"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
                             NewsCategory = 1,
-                            PublishedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(6046),
+                            PublishedAt = new DateTime(2025, 9, 27, 16, 2, 10, 10, DateTimeKind.Utc).AddTicks(7120),
                             Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
                         });
                 });
@@ -216,6 +219,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Username")
@@ -237,7 +241,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
-                            CreatedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(5961),
+                            CreatedAt = new DateTime(2025, 9, 27, 16, 2, 10, 10, DateTimeKind.Utc).AddTicks(7040),
                             Email = "admin@tideofdestiny.com",
                             EmailConfirmed = true,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
@@ -246,7 +250,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            CreatedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(5983),
+                            CreatedAt = new DateTime(2025, 9, 27, 16, 2, 10, 10, DateTimeKind.Utc).AddTicks(7054),
                             Email = "player@gmail.com",
                             EmailConfirmed = true,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
