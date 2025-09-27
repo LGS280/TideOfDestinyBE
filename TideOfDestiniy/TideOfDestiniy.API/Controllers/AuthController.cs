@@ -11,10 +11,12 @@ namespace TideOfDestiniy.API.Controllers
     public class AuthController : ControllerBase
     {
         private IUserService _userService;
+        private IAuthService _authService;
 
-        public AuthController(IUserService userService)
+        public AuthController(IUserService userService, IAuthService authService)
         {
             _userService = userService;
+            _authService = authService;
         }
 
         [HttpPost("register")]
@@ -61,7 +63,7 @@ namespace TideOfDestiniy.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var result = await (_userService as Authorization)?.LoginWithGoogleAsync(googleLoginDto);
+            var result = await _authService.LoginWithGoogleAsync(googleLoginDto);
             if (result == null || !result.Succeeded)
             {
                 return Unauthorized(new { message = result?.Message ?? "Google login failed." });
