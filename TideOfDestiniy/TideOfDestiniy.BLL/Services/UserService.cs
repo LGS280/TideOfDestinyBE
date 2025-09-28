@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TideOfDestiniy.BLL.DTOs;
 using TideOfDestiniy.BLL.Interfaces;
@@ -54,12 +55,44 @@ namespace TideOfDestiniy.BLL.Services
 
         public async Task<AuthResultDTO> RegisterAsync(RegisterDTO register)
         {
+            if (string.IsNullOrEmpty(register.Password))
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Password is required." };
+            }
+
             if (register.Password != register.ConfirmPassword)
             {
                 return new AuthResultDTO { Succeeded = false, Message = "Passwords do not match." };
             }
 
-            // 2. Chuyển đổi từ DTO sang Entity
+            if (register.Password.Length < 6) // Lớn hơn 5 tức là tối thiểu 6
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Password must be at least 6 characters long." };
+            }
+
+            var hasSpecialChar = new Regex(@"[^a-zA-Z0-9]");
+            if (!hasSpecialChar.IsMatch(register.Password))
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Password must contain at least one special character." };
+            }
+
+            var hasUpperCase = new Regex(@"[A-Z]");
+            var hasLowerCase = new Regex(@"[a-z]");
+            var hasDigit = new Regex(@"[0-9]");
+
+            if (!hasUpperCase.IsMatch(register.Password))
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Password must contain at least one uppercase letter." };
+            }
+            if (!hasLowerCase.IsMatch(register.Password))
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Password must contain at least one lowercase letter." };
+            }
+            if (!hasDigit.IsMatch(register.Password))
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Password must contain at least one digit." };
+            }
+
             var userToCreate = new User
             {
                 Username = register.Username,

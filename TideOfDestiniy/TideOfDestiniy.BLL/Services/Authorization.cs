@@ -112,6 +112,8 @@ namespace TideOfDestiniy.BLL.Services
                         Email = payload.Email,
                         Username = payload.Name, // Hoặc tạo username duy nhất từ email
                         EmailConfirmed = payload.EmailVerified,
+                        PasswordHash = null // <<-- Đặt là null một cách tường minh
+
                         // Không có PasswordHash vì họ đăng nhập qua Google
                     };
                     user = await _userRepo.CreateUserAsync(user); // Cần tạo hàm này trong Repo
