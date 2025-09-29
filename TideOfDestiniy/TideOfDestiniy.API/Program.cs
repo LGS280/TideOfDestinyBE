@@ -71,7 +71,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IUserRepo, UserRepo>();
             builder.Services.AddScoped<INewsRepo, NewsRepo>();
             builder.Services.AddScoped<ISystemRequirementRepo, SystemRequirementRepo>();
-            builder.Services.AddSingleton<IFileRepo ,FileRepo>();
+            builder.Services.AddScoped<IFileRepo, FileRepo>();
 
 
             builder.Services.AddControllers();

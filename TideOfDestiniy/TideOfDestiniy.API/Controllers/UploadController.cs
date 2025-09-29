@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TideOfDestiniy.BLL.Interfaces;
-using TideOfDestiniy.BLL.Services;
 
 namespace TideOfDestiniy.API.Controllers
 {
@@ -21,19 +20,12 @@ namespace TideOfDestiniy.API.Controllers
             try
             {
                 var result = await _service.SaveFileAsync(file);
-                return Ok(new { file = result.FileName, url = result.FilePath });
+                return Ok(new { file = result.FileName, url = result.FilePath, size = result.FileSize });
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-        }
-
-        [HttpGet("games")]
-        public IActionResult GetAllFiles()
-        {
-            var files = _service.GetFiles();
-            return Ok(files);
         }
     }
 }

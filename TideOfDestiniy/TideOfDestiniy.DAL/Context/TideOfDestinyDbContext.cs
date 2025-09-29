@@ -10,6 +10,7 @@ namespace TideOfDestiniy.DAL.Context
 {
     public class TideOfDestinyDbContext : DbContext
     {
+        public TideOfDestinyDbContext() { }
         public TideOfDestinyDbContext(DbContextOptions<TideOfDestinyDbContext> options) : base(options){ }
 
         public DbSet<User> Users { get; set; }
@@ -18,6 +19,20 @@ namespace TideOfDestiniy.DAL.Context
         public DbSet<News> News { get; set; }
         public DbSet<SystemRequirement> SystemRequirements { get; set; }
         public DbSet<GameBuild> GameBuilds { get; set; }
+        public DbSet<GameFile> GameFiles { get; set; }
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var fallback = Environment.GetEnvironmentVariable("TIDEOD_DEFAULT_CONN");
+                if (!string.IsNullOrWhiteSpace(fallback))
+                {
+                    optionsBuilder.UseMySql(fallback, ServerVersion.AutoDetect(fallback));
+                }
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

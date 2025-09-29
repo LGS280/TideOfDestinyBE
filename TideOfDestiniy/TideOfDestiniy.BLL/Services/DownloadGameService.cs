@@ -14,23 +14,23 @@ namespace TideOfDestiniy.BLL.Services
 {
     public class DownloadGameService : IDownloadGameService
     {
-        private readonly IFileRepo _fileRepo;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileRepo _repo;
+        private readonly IWebHostEnvironment _env;
 
-        public DownloadGameService(IFileRepo fileRepo, IWebHostEnvironment webHostEnvironment)
+        public DownloadGameService(IFileRepo repo, IWebHostEnvironment env)
         {
-            _fileRepo = fileRepo;
-            _webHostEnvironment = webHostEnvironment;
+            _repo = repo;
+            _env = env;
         }
 
         public GameFile? GetFileById(int id)
         {
-            return _fileRepo.GetAll().FirstOrDefault(f => f.Id == id);
+            return _repo.GetById(id);
         }
 
         public string GetPhysicalPath(GameFile file)
         {
-            return Path.Combine(_webHostEnvironment.WebRootPath, "downloads", file.FileName);
+            return Path.Combine(_env.WebRootPath, "downloads", file.FileName);
         }
     }
 }

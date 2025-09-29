@@ -12,5 +12,7 @@ namespace TideOfDestiniy.DAL.Interfaces
         void Save(GameFile file);
 
         IEnumerable<GameFile> GetAll();
+
+        GameFile? GetById(int id);
     }
 }

@@ -14,18 +14,13 @@ namespace TideOfDestiniy.BLL.Services
 {
     public class UploadService : IUploadService
     {
-        private readonly IFileRepo _fileRepo;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileRepo _repo;
+        private readonly IWebHostEnvironment _env;
 
-        public UploadService(IFileRepo fileRepo, IWebHostEnvironment webHostEnvironment)
+        public UploadService(IFileRepo repo, IWebHostEnvironment env)
         {
-            _fileRepo = fileRepo;
-            _webHostEnvironment = webHostEnvironment;
-        }
-
-        public IEnumerable<GameFile> GetFiles()
-        {
-            return _fileRepo.GetAll();
+            _repo = repo;
+            _env = env;
         }
 
         public async Task<GameFile> SaveFileAsync(IFormFile file)
@@ -33,7 +28,7 @@ namespace TideOfDestiniy.BLL.Services
             if (file == null || file.Length == 0)
                 throw new Exception("No file uploaded");
 
-            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "downloads");
+            var uploadsFolder = Path.Combine(_env.WebRootPath, "downloads");
             if (!Directory.Exists(uploadsFolder))
                 Directory.CreateDirectory(uploadsFolder);
 
@@ -47,10 +42,12 @@ namespace TideOfDestiniy.BLL.Services
             var gameFile = new GameFile
             {
                 FileName = file.FileName,
-                FilePath = $"/downloads/{file.FileName}"
+                FilePath = $"/downloads/{file.FileName}",
+                FileSize = file.Length,
+                UploadedAt = DateTime.UtcNow
             };
 
-            _fileRepo.Save(gameFile);
+            _repo.Save(gameFile);
 
             return gameFile;
         }

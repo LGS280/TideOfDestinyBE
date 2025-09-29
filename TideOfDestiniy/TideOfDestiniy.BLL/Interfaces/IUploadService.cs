@@ -11,6 +11,5 @@ namespace TideOfDestiniy.BLL.Interfaces
     public interface IUploadService
     {
         Task<GameFile> SaveFileAsync(IFormFile file);
-        IEnumerable<GameFile> GetFiles();
     }
 }
