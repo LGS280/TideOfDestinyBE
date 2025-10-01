@@ -65,6 +65,8 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<INewsService, NewsService>();
             builder.Services.AddScoped<ISystemRequirementService, SystemRequirementService>();
             builder.Services.AddScoped<IAuthService, Authorization>();
+            builder.Services.AddScoped<IPhotoService, PhotoService>();
+
             //Add Repositories
             builder.Services.AddScoped<IUserRepo, UserRepo>();
             builder.Services.AddScoped<INewsRepo, NewsRepo>();
