@@ -65,6 +65,8 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<INewsService, NewsService>();
             builder.Services.AddScoped<ISystemRequirementService, SystemRequirementService>();
             builder.Services.AddScoped<IAuthService, Authorization>();
+            builder.Services.AddScoped<IPhotoService, PhotoService>();
+
             //Add Repositories
             builder.Services.AddScoped<IUserRepo, UserRepo>();
             builder.Services.AddScoped<INewsRepo, NewsRepo>();
@@ -121,6 +123,9 @@ namespace TideOfDestiniy.API
 
             var app = builder.Build();
 
+            ApplyMigrations(app);
+
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -140,5 +145,38 @@ namespace TideOfDestiniy.API
 
             app.Run();
         }
+
+        // ====> TẠO MỘT PHƯƠNG THỨC HELPER ĐỂ CODE SẠCH SẼ HƠN <====
+        private static void ApplyMigrations(IApplicationBuilder app)
+        {
+            // Sử dụng IServiceScopeFactory để lấy DbContext một cách an toàn
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<TideOfDestinyDbContext>();
+                    // Kiểm tra xem database có thể kết nối không
+                    if (context.Database.CanConnect())
+                    {
+                        Console.WriteLine("Applying database migrations...");
+                        // Áp dụng bất kỳ migration nào chưa được áp dụng
+                        context.Database.Migrate();
+                        Console.WriteLine("Migrations applied successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Could not connect to the database. Skipping migrations.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Ghi log lỗi nếu quá trình migrate thất bại
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred during database migration.");
+                }
+            }
+        }
+        // ========================================================
     }
 }

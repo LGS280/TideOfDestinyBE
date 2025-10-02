@@ -9,12 +9,12 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using TideOfDestiniy.BLL.DTOs;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.DAL.Entities;
 using TideOfDestiniy.DAL.Interfaces;
 using TideOfDestiniy.DAL.Repositories;
-using Google.Apis.Auth; // Thêm using
+using Google.Apis.Auth;
+using TideOfDestiniy.BLL.DTOs.Responses; // Thêm using
 
 
 namespace TideOfDestiniy.BLL.Services
@@ -112,6 +112,8 @@ namespace TideOfDestiniy.BLL.Services
                         Email = payload.Email,
                         Username = payload.Name, // Hoặc tạo username duy nhất từ email
                         EmailConfirmed = payload.EmailVerified,
+                        PasswordHash = null // <<-- Đặt là null một cách tường minh
+
                         // Không có PasswordHash vì họ đăng nhập qua Google
                     };
                     user = await _userRepo.CreateUserAsync(user); // Cần tạo hàm này trong Repo

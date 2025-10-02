@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TideOfDestiniy.BLL.DTOs;
+using TideOfDestiniy.BLL.DTOs.Requests;
+using TideOfDestiniy.BLL.DTOs.Responses;
 
 namespace TideOfDestiniy.BLL.Interfaces
 {

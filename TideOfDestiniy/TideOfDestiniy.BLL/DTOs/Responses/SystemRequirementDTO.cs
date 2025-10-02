@@ -4,18 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TideOfDestiniy.BLL.DTOs
+namespace TideOfDestiniy.BLL.DTOs.Responses
 {
-    public class CreateSystemRequirementDTO
+    public class SystemRequirementDTO
     {
+        public int Id { get; set; }
         public string OS { get; set; }
         public string Processor { get; set; }
         public string Memory { get; set; }
         public string Graphics { get; set; }
         public string Storage { get; set; }
-
         public string DirectX { get; set; }
-
         public string Type { get; set; } // "Minimum" or "Recommended"
     }
 }

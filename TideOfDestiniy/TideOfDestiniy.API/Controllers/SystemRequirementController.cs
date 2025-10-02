@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TideOfDestiniy.BLL.DTOs;
+using TideOfDestiniy.BLL.DTOs.Requests;
 using TideOfDestiniy.BLL.Interfaces;
 
 namespace TideOfDestiniy.API.Controllers
