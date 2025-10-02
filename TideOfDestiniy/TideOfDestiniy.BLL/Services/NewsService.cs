@@ -4,7 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TideOfDestiniy.BLL.DTOs;
+using TideOfDestiniy.BLL.DTOs.Requests;
+using TideOfDestiniy.BLL.DTOs.Responses;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.DAL.Entities;
 using TideOfDestiniy.DAL.Interfaces;
@@ -14,19 +15,41 @@ namespace TideOfDestiniy.BLL.Services
 {
     public class NewsService : INewsService
     {
-        private INewsRepo _newsRepo;
+        private readonly INewsRepo _newsRepo;
+        private readonly IPhotoService _photoService;
 
-        public NewsService(INewsRepo newsRepo)
+        public NewsService(INewsRepo newsRepo, IPhotoService photoService)
         {
             _newsRepo = newsRepo;
+            _photoService = photoService;
         }
         public async Task<AuthResultDTO> CreateNewsAsync(CreateNewsDTO newsDTO, Guid id)
         {
+            string? uploadedImageUrl = null;
+
+            if (newsDTO.ImageUrl != null && newsDTO.ImageUrl.Length > 0)
+            {
+                // Nếu có, upload nó lên Cloudinary
+                var uploadResult = await _photoService.AddPhotoAsync(newsDTO.ImageUrl);
+
+                // Nếu upload thành công, lấy URL
+                if (uploadResult.Succeeded)
+                {
+                    uploadedImageUrl = uploadResult.Url;
+                }
+                else
+                {
+                    // (Tùy chọn) Xử lý lỗi: ném ra exception hoặc bỏ qua việc thêm ảnh
+                    // Ở đây chúng ta sẽ bỏ qua và tiếp tục tạo bài viết không có ảnh
+                    // logger.LogError("Cloudinary upload failed: {error}", uploadResult.ErrorMessage);
+                }
+            }
+
             var news = new News
             {
                 Title = newsDTO.Title,
                 Content = newsDTO.Content,
-                ImageUrl = newsDTO.ImageUrl,
+                ImageUrl = uploadedImageUrl,
                 NewsCategory = newsDTO.NewsCategory,
                 //PublishedAt = newsDTO.PublishedAt,
                 AuthorId = id,

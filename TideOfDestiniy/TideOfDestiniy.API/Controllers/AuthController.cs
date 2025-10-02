@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TideOfDestiniy.BLL.DTOs;
+using TideOfDestiniy.BLL.DTOs.Requests;
+using TideOfDestiniy.BLL.DTOs.Responses;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.BLL.Services;
 

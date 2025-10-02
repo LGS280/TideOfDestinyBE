@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TideOfDestiniy.DAL.Entities;
 
-namespace TideOfDestiniy.BLL.DTOs
+namespace TideOfDestiniy.BLL.DTOs.Responses
 {
     public class NewsDTO
     {

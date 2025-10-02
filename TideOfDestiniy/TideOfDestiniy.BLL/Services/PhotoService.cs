@@ -17,7 +17,7 @@ namespace TideOfDestiniy.BLL.Services
     {
         private Cloudinary _cloudinary;
 
-        public PhotoService(IConfiguration config, Cloudinary cloudinary)
+        public PhotoService(IConfiguration config)
         {
             // Đọc cấu hình từ appsettings.json và tạo tài khoản Cloudinary
             var account = new Account(
@@ -26,7 +26,6 @@ namespace TideOfDestiniy.BLL.Services
                 config["CloudinarySettings:ApiSecret"]
             );
             _cloudinary = new Cloudinary(account);
-            _cloudinary = cloudinary;
         }
 
         public async Task<PhotoUploadResult> AddPhotoAsync(IFormFile file)

@@ -1,14 +1,14 @@
-﻿    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Security.Claims;
-    using TideOfDestiniy.BLL.DTOs;
-    using TideOfDestiniy.BLL.Interfaces;
-    using TideOfDestiniy.BLL.Services;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using TideOfDestiniy.BLL.DTOs.Requests;
+using TideOfDestiniy.BLL.Interfaces;
+using TideOfDestiniy.BLL.Services;
 using TideOfDestiniy.DAL.Entities;
 
-    namespace TideOfDestiniy.API.Controllers
+namespace TideOfDestiniy.API.Controllers
     {
         [Route("api/[controller]")]
         [ApiController]
@@ -41,15 +41,12 @@ using TideOfDestiniy.DAL.Entities;
 
             [HttpPost]
             [Authorize(Roles = "Admin")]
-            public async Task<IActionResult> CreateNews([FromBody] CreateNewsDTO newsDTO)
+            public async Task<IActionResult> CreateNews([FromForm] CreateNewsDTO newsDTO)
             {
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
-
-
-
 
                 var userIdString =  User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
