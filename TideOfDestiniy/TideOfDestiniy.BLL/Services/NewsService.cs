@@ -144,16 +144,16 @@ namespace TideOfDestiniy.BLL.Services
                     return new AuthResultDTO { Succeeded = false, Message = $"Photo upload failed: {uploadResult.ErrorMessage}" };
                 }
             }
-            // Trường hợp 2: Người dùng muốn xóa ảnh hiện tại (và không upload ảnh mới)
-            else if (newsDTO.RemoveCurrentImage && !string.IsNullOrEmpty(news.ImageUrl))
-            {
-                var publicId = GetPublicIdFromUrl(news.ImageUrl);
-                if (publicId != null)
-                {
-                    await _photoService.DeletePhotoAsync(publicId);
-                }
-                finalImageUrl = null; // Xóa URL khỏi database
-            }
+            //// Trường hợp 2: Người dùng muốn xóa ảnh hiện tại (và không upload ảnh mới)
+            //else if (newsDTO.RemoveCurrentImage && !string.IsNullOrEmpty(news.ImageUrl))
+            //{
+            //    var publicId = GetPublicIdFromUrl(news.ImageUrl);
+            //    if (publicId != null)
+            //    {
+            //        await _photoService.DeletePhotoAsync(publicId);
+            //    }
+            //    finalImageUrl = null; // Xóa URL khỏi database
+            //}
 
             news.Title = newsDTO.Title;
             news.Content = newsDTO.Content;
