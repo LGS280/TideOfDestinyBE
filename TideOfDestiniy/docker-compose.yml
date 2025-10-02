@@ -7,10 +7,15 @@ services:
       context: .
       dockerfile: TideOfDestiniy.API/Dockerfile
     ports:
-      - "8080:8080" # Ánh xạ port 8080 của máy thật vào port 8080 của container
+      # - "8080:8080" # Ánh xạ port 8080 của máy thật vào port 8080 của container
+      - "5168:8080"
+      - "7256:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080 # Cấu hình Kestrel để lắng nghe trên port 8080
+      # - ASPNETCORE_URLS=http://+:8080 # Cấu hình Kestrel để lắng nghe trên port 8080
+      - ASPNETCORE_URLS=https://+:8081;http://+:8080
+    volumes:
+      - ~/.vsdbg:/remote_debugger:rw
     depends_on:
       db:
         condition: service_healthy # Chỉ khởi động API khi DB đã sẵn sàng
