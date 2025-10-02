@@ -67,7 +67,7 @@ namespace TideOfDestiniy.API.Controllers
             }
             [HttpPut("{id}")]
             [Authorize(Roles = "Admin")]
-            public async Task<IActionResult> UpdateNews(Guid id, [FromBody] UpdateNewsDTO newsDTO)
+            public async Task<IActionResult> UpdateNews(Guid id, [FromForm] UpdateNewsDTO newsDTO)
             {
                 if (!ModelState.IsValid)
                 {

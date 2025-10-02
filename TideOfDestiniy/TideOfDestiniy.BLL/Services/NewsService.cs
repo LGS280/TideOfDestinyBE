@@ -117,9 +117,47 @@ namespace TideOfDestiniy.BLL.Services
                 return new AuthResultDTO { Succeeded = false, Message = "News not found." };
             }
 
+            string? finalImageUrl = news.ImageUrl;
+
+            if (newsDTO.ImageUrl != null && newsDTO.ImageUrl.Length > 0)
+            {
+                // Xóa ảnh cũ trên Cloudinary nếu có
+                if (!string.IsNullOrEmpty(news.ImageUrl))
+                {
+                    // Cần một hàm để trích xuất PublicId từ URL
+                    var publicId = GetPublicIdFromUrl(news.ImageUrl);
+                    if (publicId != null)
+                    {
+                        await _photoService.DeletePhotoAsync(publicId);
+                    }
+                }
+
+                // Upload ảnh mới
+                var uploadResult = await _photoService.AddPhotoAsync(newsDTO.ImageUrl);
+                if (uploadResult.Succeeded)
+                {
+                    finalImageUrl = uploadResult.Url; // Cập nhật URL mới
+                }
+                else
+                {
+                    // (Tùy chọn) Xử lý lỗi upload, có thể trả về lỗi hoặc tiếp tục mà không đổi ảnh
+                    return new AuthResultDTO { Succeeded = false, Message = $"Photo upload failed: {uploadResult.ErrorMessage}" };
+                }
+            }
+            // Trường hợp 2: Người dùng muốn xóa ảnh hiện tại (và không upload ảnh mới)
+            else if (newsDTO.RemoveCurrentImage && !string.IsNullOrEmpty(news.ImageUrl))
+            {
+                var publicId = GetPublicIdFromUrl(news.ImageUrl);
+                if (publicId != null)
+                {
+                    await _photoService.DeletePhotoAsync(publicId);
+                }
+                finalImageUrl = null; // Xóa URL khỏi database
+            }
+
             news.Title = newsDTO.Title;
             news.Content = newsDTO.Content;
-            news.ImageUrl = newsDTO.ImageUrl;
+            news.ImageUrl = finalImageUrl;
             news.NewsCategory = newsDTO.NewsCategory;
 
             var update = await _newsRepo.UpdateNewsAsync(news);
@@ -129,6 +167,26 @@ namespace TideOfDestiniy.BLL.Services
             }
 
             return new AuthResultDTO { Succeeded = true, Message = "News updated successfully." };
+        }
+
+        private string? GetPublicIdFromUrl(string url)
+        {
+            try
+            {
+                // URL Cloudinary thường có dạng: http://res.cloudinary.com/<cloud_name>/image/upload/<version>/<public_id>.<format>
+                var uri = new Uri(url);
+                // Lấy phần cuối cùng của đường dẫn và loại bỏ phần mở rộng file
+                var publicIdWithFormat = uri.Segments.LastOrDefault();
+                if (publicIdWithFormat != null)
+                {
+                    return Path.GetFileNameWithoutExtension(publicIdWithFormat);
+                }
+                return null;
+            }
+            catch
+            {
+                return null; // URL không hợp lệ
+            }
         }
     }
 }
