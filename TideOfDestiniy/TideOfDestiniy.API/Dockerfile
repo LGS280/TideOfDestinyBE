@@ -18,7 +18,7 @@ COPY ["TideOfDestiniy.DAL/TideOfDestiniy.DAL.csproj", "TideOfDestiniy.DAL/"]
 RUN dotnet restore "./TideOfDestiniy.API/TideOfDestiniy.API.csproj"
 COPY . .
 WORKDIR "/src/TideOfDestiniy.API"
-RUN dotnet build "./TideOfDestiniy.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./TideOfDestiniy.API.csproj" -c $BUILD_CONFIGURATION -o /app/build	
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
