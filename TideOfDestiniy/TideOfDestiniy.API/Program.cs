@@ -1,5 +1,7 @@
 ﻿
+using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -20,8 +22,6 @@ namespace TideOfDestiniy.API
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddEndpointsApiExplorer();
-
 
             // ====> ĐỊNH NGHĨA TÊN POLICY <====
             var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -62,16 +62,22 @@ namespace TideOfDestiniy.API
             //Add Services
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAuthorization, Authorization>();
+            builder.Services.AddScoped<IAuthService, Authorization>();
             builder.Services.AddScoped<INewsService, NewsService>();
             builder.Services.AddScoped<ISystemRequirementService, SystemRequirementService>();
-            builder.Services.AddScoped<IAuthService, Authorization>();
+            builder.Services.AddScoped<IUploadService ,UploadService>();
+            builder.Services.AddScoped<IDownloadGameService, DownloadGameService>();
+            builder.Services.AddScoped<IR2StorageService, R2StorageService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
+
 
             //Add Repositories
             builder.Services.AddScoped<IUserRepo, UserRepo>();
             builder.Services.AddScoped<INewsRepo, NewsRepo>();
             builder.Services.AddScoped<ISystemRequirementRepo, SystemRequirementRepo>();
+            builder.Services.AddScoped<IFileRepo, FileRepo>();
 
+            builder.Services.AddHttpClient();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -85,9 +91,31 @@ namespace TideOfDestiniy.API
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   policy =>
                                   {
-                                      policy.AllowAnyOrigin()    // Cho phép TẤT CẢ các origin
-                                            .AllowAnyHeader()   // Cho phép TẤT CẢ các header
-                                            .AllowAnyMethod();  // Cho phép TẤT CẢ các method (GET, POST, PUT, OPTIONS...)
+                                      var origins = builder.Configuration.GetValue<string>("CorsOrigins");
+                                      if (!string.IsNullOrEmpty(origins))
+                                      {
+                                          policy.WithOrigins(origins.Split(',')) // Tách chuỗi thành mảng các origin
+                                                .AllowAnyHeader()
+                                                .AllowAnyMethod()
+                                                .AllowCredentials() // Allow credentials for file downloads
+                                                .SetIsOriginAllowedToAllowWildcardSubdomains(); // Allow subdomains
+                                      }
+                                      else
+                                      {
+                                          // Fallback for development - allow all origins (cannot use AllowCredentials with AllowAnyOrigin)
+                                          policy.AllowAnyOrigin()
+                                                .AllowAnyHeader()
+                                                .AllowAnyMethod();
+                                      }
+                                  });
+                
+                // Add a separate policy for Swagger UI same-origin requests
+                options.AddPolicy("AllowAll",
+                                  policy =>
+                                  {
+                                      policy.AllowAnyOrigin()
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
                                   });
             });
             // ===============================================
@@ -121,10 +149,32 @@ namespace TideOfDestiniy.API
                 });
             });
 
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = long.MaxValue; // gần như không giới hạn
+            });
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.Limits.MaxRequestBodySize = long.MaxValue; // hoặc set giá trị cụ thể ví dụ 5GB
+            });
+            var r2Config = builder.Configuration.GetSection("R2Storage");
+
+            builder.Services.AddSingleton<IAmazonS3>(sp =>
+            {
+                return new AmazonS3Client(
+                    r2Config["AccessKeyId"],
+                    r2Config["SecretAccessKey"],
+                    new AmazonS3Config
+                    {
+                        ServiceURL = r2Config["AccountUrl"], // dạng: https://<accountid>.r2.cloudflarestorage.com
+                        ForcePathStyle = true, // bắt buộc cho R2
+                        AuthenticationRegion = "auto", // R2 yêu cầu để auto detect
+                        //DisablePayloadSigning = true
+                    }
+                );
+            });
+            builder.Services.AddScoped<IR2StorageService, R2StorageService>();
             var app = builder.Build();
-
-            ApplyMigrations(app);
-
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -133,7 +183,7 @@ namespace TideOfDestiniy.API
                 app.UseSwaggerUI();
             }
 
-                //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
@@ -145,38 +195,5 @@ namespace TideOfDestiniy.API
 
             app.Run();
         }
-
-        // ====> TẠO MỘT PHƯƠNG THỨC HELPER ĐỂ CODE SẠCH SẼ HƠN <====
-        private static void ApplyMigrations(IApplicationBuilder app)
-        {
-            // Sử dụng IServiceScopeFactory để lấy DbContext một cách an toàn
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<TideOfDestinyDbContext>();
-                    // Kiểm tra xem database có thể kết nối không
-                    if (context.Database.CanConnect())
-                    {
-                        Console.WriteLine("Applying database migrations...");
-                        // Áp dụng bất kỳ migration nào chưa được áp dụng
-                        context.Database.Migrate();
-                        Console.WriteLine("Migrations applied successfully.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Could not connect to the database. Skipping migrations.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Ghi log lỗi nếu quá trình migrate thất bại
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred during database migration.");
-                }
-            }
-        }
-        // ========================================================
     }
 }
