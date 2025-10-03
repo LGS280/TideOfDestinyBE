@@ -13,19 +13,27 @@ namespace TideOfDestiniy.API.Controllers
         {
             _service = service;
         }
-
-        [HttpPost("game")]
-        public async Task<IActionResult> UploadGame(IFormFile file)
+        /// <summary>
+        /// Upload file từ client lên server ASP.NET Core → đẩy tiếp lên R2
+        /// </summary>
+        [HttpPost("file")]
+        [RequestSizeLimit(long.MaxValue)] // cho phép file lớn
+        public async Task<IActionResult> UploadFile(IFormFile file)
         {
-            try
+            if (file == null || file.Length == 0)
+                return BadRequest("Không có file nào được chọn");
+
+            // Đọc file stream
+            using var stream = file.OpenReadStream();
+
+            // Gọi service để upload lên Cloudflare R2
+            var result = await _service.UploadToR2Async(stream, file.FileName, file.ContentType);
+
+            return Ok(new
             {
-                var result = await _service.SaveFileAsync(file);
-                return Ok(new { file = result.FileName, url = result.FilePath, size = result.FileSize });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+                message = "Upload thành công!",
+                file = result
+            });
         }
     }
 }

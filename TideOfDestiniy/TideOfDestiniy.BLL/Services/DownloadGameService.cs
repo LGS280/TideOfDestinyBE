@@ -1,36 +1,40 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Configuration;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.DAL.Entities;
 using TideOfDestiniy.DAL.Interfaces;
-using TideOfDestiniy.DAL.Repositories;
 
 namespace TideOfDestiniy.BLL.Services
 {
     public class DownloadGameService : IDownloadGameService
     {
         private readonly IFileRepo _repo;
-        private readonly IWebHostEnvironment _env;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpClient _httpClient;
+        private readonly string _baseUrl; // Cloudflare R2 public gateway base URL
 
-        public DownloadGameService(IFileRepo repo, IWebHostEnvironment env)
+        public DownloadGameService(IFileRepo repo, IHttpClientFactory httpClientFactory, HttpClient httpClient, IConfiguration configuration)
         {
             _repo = repo;
-            _env = env;
+            _httpClientFactory = httpClientFactory;
+            _httpClient = httpClient;
+            _baseUrl = configuration["R2Storage:AccountUrl"]
+                       ?? throw new ArgumentNullException("CloudflareR2:PublicBaseUrl is missing in configuration");
         }
 
-        public GameFile? GetFileById(int id)
+        public async Task<GameFile?> GetByIdAsync(int id)
         {
-            return _repo.GetById(id);
+            return await _repo.GetByIdAsync(id);
         }
 
-        public string GetPhysicalPath(GameFile file)
+        public async Task<Stream?> DownloadFromR2Async(GameFile file)
         {
-            return Path.Combine(_env.WebRootPath, "downloads", file.FileName);
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetAsync(file.DownloadUrl, HttpCompletionOption.ResponseHeadersRead);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadAsStreamAsync();
         }
     }
 }

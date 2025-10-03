@@ -8,8 +8,8 @@ using TideOfDestiniy.DAL.Entities;
 
 namespace TideOfDestiniy.BLL.Interfaces
 {
-    public interface IUploadService
+    public interface IUploadService : IDisposable
     {
-        Task<GameFile> SaveFileAsync(IFormFile file);
+        Task<GameFile> UploadToR2Async(Stream fileStream, string fileName, string contentType);
     }
 }

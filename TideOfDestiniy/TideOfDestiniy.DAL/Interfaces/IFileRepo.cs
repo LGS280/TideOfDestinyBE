@@ -9,10 +9,9 @@ namespace TideOfDestiniy.DAL.Interfaces
 {
     public interface IFileRepo
     {
-        void Save(GameFile file);
-
-        IEnumerable<GameFile> GetAll();
-
-        GameFile? GetById(int id);
+        Task AddAsync(GameFile file);
+        Task<GameFile?> GetByIdAsync(int id);
+        Task<GameFile?> GetByFileNameAsync(string fileName);
+        Task<IEnumerable<GameFile>> GetAllAsync();
     }
 }

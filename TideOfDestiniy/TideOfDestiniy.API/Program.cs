@@ -1,4 +1,5 @@
 ﻿
+using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +66,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<ISystemRequirementService, SystemRequirementService>();
             builder.Services.AddScoped<IUploadService ,UploadService>();
             builder.Services.AddScoped<IDownloadGameService, DownloadGameService>();
+            builder.Services.AddScoped<IR2StorageService, R2StorageService>();
 
 
             //Add Repositories
@@ -73,6 +75,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<ISystemRequirementRepo, SystemRequirementRepo>();
             builder.Services.AddScoped<IFileRepo, FileRepo>();
 
+            builder.Services.AddHttpClient();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -91,8 +94,26 @@ namespace TideOfDestiniy.API
                                       {
                                           policy.WithOrigins(origins.Split(',')) // Tách chuỗi thành mảng các origin
                                                 .AllowAnyHeader()
+                                                .AllowAnyMethod()
+                                                .AllowCredentials() // Allow credentials for file downloads
+                                                .SetIsOriginAllowedToAllowWildcardSubdomains(); // Allow subdomains
+                                      }
+                                      else
+                                      {
+                                          // Fallback for development - allow all origins (cannot use AllowCredentials with AllowAnyOrigin)
+                                          policy.AllowAnyOrigin()
+                                                .AllowAnyHeader()
                                                 .AllowAnyMethod();
                                       }
+                                  });
+                
+                // Add a separate policy for Swagger UI same-origin requests
+                options.AddPolicy("AllowAll",
+                                  policy =>
+                                  {
+                                      policy.AllowAnyOrigin()
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
                                   });
             });
             // ===============================================
@@ -134,7 +155,23 @@ namespace TideOfDestiniy.API
             {
                 options.Limits.MaxRequestBodySize = long.MaxValue; // hoặc set giá trị cụ thể ví dụ 5GB
             });
+            var r2Config = builder.Configuration.GetSection("R2Storage");
 
+            builder.Services.AddSingleton<IAmazonS3>(sp =>
+            {
+                return new AmazonS3Client(
+                    r2Config["AccessKeyId"],
+                    r2Config["SecretAccessKey"],
+                    new AmazonS3Config
+                    {
+                        ServiceURL = r2Config["AccountUrl"], // dạng: https://<accountid>.r2.cloudflarestorage.com
+                        ForcePathStyle = true, // bắt buộc cho R2
+                        AuthenticationRegion = "auto", // R2 yêu cầu để auto detect
+                        //DisablePayloadSigning = true
+                    }
+                );
+            });
+            builder.Services.AddScoped<IR2StorageService, R2StorageService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

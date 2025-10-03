@@ -9,7 +9,7 @@ namespace TideOfDestiniy.BLL.Interfaces
 {
     public interface IDownloadGameService
     {
-        GameFile? GetFileById(int id);
-        string GetPhysicalPath(GameFile file);
+        Task<GameFile?> GetByIdAsync(int id);
+        Task<Stream?> DownloadFromR2Async(GameFile file);
     }
 }

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.S3;
+using Microsoft.AspNetCore.Mvc;
 using TideOfDestiniy.BLL.Interfaces;
+using TideOfDestiniy.DAL.Interfaces;
 
 namespace TideOfDestiniy.API.Controllers
 {
@@ -8,25 +10,79 @@ namespace TideOfDestiniy.API.Controllers
     public class DownloadController : ControllerBase
     {
         private readonly IDownloadGameService _service;
-
-        public DownloadController(IDownloadGameService service)
+        private readonly IR2StorageService _storageService;
+        private readonly IFileRepo _repo;
+        public DownloadController(IDownloadGameService service, IR2StorageService storageService, IFileRepo repo)
         {
             _service = service;
+            _storageService = storageService;
+            _repo = repo;
         }
 
-        [HttpGet("{id}")]
-        public IActionResult DownloadGame(int id)
+        [HttpGet("download/{fileName}")]
+        public async Task<IActionResult> Download(string fileName)
         {
-            var file = _service.GetFileById(id);
-            if (file == null)
-                return NotFound("Game not found in database");
+            try
+            {
+                var fileStream = await _storageService.DownloadFileAsync(fileName);
+                
+                // Try to get file info from database for better content type
+                var fileInfo = await _repo.GetByFileNameAsync(fileName);
+                var contentType = fileInfo?.ContentType ?? "application/octet-stream";
+                
+                return File(fileStream, contentType, fileName);
+            }
+            catch (AmazonS3Exception ex)
+            {
+                return NotFound($"File not found or error accessing R2: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
-            var filePath = _service.GetPhysicalPath(file);
-            if (!System.IO.File.Exists(filePath))
-                return NotFound("File not found on server");
+        [HttpGet("download-by-id/{id}")]
+        public async Task<IActionResult> DownloadById(int id)
+        {
+            try
+            {
+                var fileInfo = await _service.GetByIdAsync(id);
+                if (fileInfo == null)
+                {
+                    return NotFound("File not found in database");
+                }
 
-            var contentType = "application/octet-stream"; // fallback type
-            return PhysicalFile(filePath, contentType, file.FileName, enableRangeProcessing: true);
+                var fileStream = await _storageService.DownloadFileAsync(fileInfo.FileName);
+                return File(fileStream, fileInfo.ContentType, fileInfo.FileName);
+            }
+            catch (AmazonS3Exception ex)
+            {
+                return NotFound($"File not found or error accessing R2: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("download-by-key/{key}")]
+        public async Task<IActionResult> DownloadByKey(string key)
+        {
+            try
+            {
+                var fileStream = await _storageService.DownloadFileByKeyAsync(key);
+                var fileName = Path.GetFileName(key);
+                return File(fileStream, "application/octet-stream", fileName);
+            }
+            catch (AmazonS3Exception ex)
+            {
+                return NotFound($"File not found or error accessing R2: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

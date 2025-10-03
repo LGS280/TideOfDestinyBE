@@ -20,20 +20,25 @@ namespace TideOfDestiniy.DAL.Repositories
             _context = context;
         }
 
-        public void Save(GameFile file)
+        public async Task AddAsync(GameFile file)
         {
             _context.GameFiles.Add(file);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public IEnumerable<GameFile> GetAll()
+        public async Task<GameFile?> GetByIdAsync(int id)
         {
-            return _context.GameFiles.AsNoTracking().ToList();
+            return await _context.GameFiles.FirstOrDefaultAsync(f => f.Id == id);
         }
 
-        public GameFile? GetById(int id)
+        public async Task<GameFile?> GetByFileNameAsync(string fileName)
         {
-            return _context.GameFiles.FirstOrDefault(f => f.Id == id);
+            return await _context.GameFiles.FirstOrDefaultAsync(f => f.FileName == fileName);
+        }
+
+        public async Task<IEnumerable<GameFile>> GetAllAsync()
+        {
+            return await Task.FromResult(_context.GameFiles.ToList());
         }
     }
 }
