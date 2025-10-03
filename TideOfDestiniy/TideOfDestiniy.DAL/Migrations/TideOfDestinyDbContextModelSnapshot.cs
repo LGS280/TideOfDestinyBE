@@ -57,6 +57,37 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.ToTable("GameBuilds");
                 });
 
+            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.GameFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DownloadUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GameFiles");
+                });
+
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
                 {
                     b.Property<Guid>("Id")
