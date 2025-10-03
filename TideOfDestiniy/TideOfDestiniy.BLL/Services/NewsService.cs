@@ -45,6 +45,15 @@ namespace TideOfDestiniy.BLL.Services
                 }
             }
 
+            if(string.IsNullOrEmpty(newsDTO.Title))
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Title cannot be empty." };
+            }
+            if(string.IsNullOrEmpty(newsDTO.Content))
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Content cannot be empty." };
+            }
+
             var news = new News
             {
                 Title = newsDTO.Title,
@@ -154,6 +163,16 @@ namespace TideOfDestiniy.BLL.Services
             //    }
             //    finalImageUrl = null; // Xóa URL khỏi database
             //}
+
+            if(string.IsNullOrEmpty(newsDTO.Title))
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Title cannot be empty." };
+            }
+
+            if(string.IsNullOrEmpty(newsDTO.Content))
+            {
+                return new AuthResultDTO { Succeeded = false, Message = "Content cannot be empty." };
+            }
 
             news.Title = newsDTO.Title;
             news.Content = newsDTO.Content;
