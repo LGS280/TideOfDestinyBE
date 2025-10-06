@@ -36,5 +36,10 @@ namespace TideOfDestiniy.BLL.Services
 
             return await response.Content.ReadAsStreamAsync();
         }
+
+        public async Task<GameFile?> GetLastestFileAsync()
+        {
+            return await _repo.GetLastestFile();
+        }
     }
 }
