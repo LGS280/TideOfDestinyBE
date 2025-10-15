@@ -38,13 +38,13 @@
       ],
       "serviceName": "api"
     }
-  //},
-  //"iisSettings": {
-  //  "windowsAuthentication": false,
-  //  "anonymousAuthentication": true,
-  //  "iisExpress": {
-  //    "applicationUrl": "http://localhost:51247/",
-  //    "sslPort": 44323
-  //  }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:51247/",
+      "sslPort": 44323
+    }
   }
 }
