@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,10 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using TideOfDestiniy.BLL.DTOs.Requests;
 using TideOfDestiniy.BLL.DTOs.Responses;
+using TideOfDestiniy.BLL.Hubs;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.DAL.Entities;
 using TideOfDestiniy.DAL.Interfaces;
 using TideOfDestiniy.DAL.Repositories;
+
 
 namespace TideOfDestiniy.BLL.Services
 {
@@ -17,11 +20,13 @@ namespace TideOfDestiniy.BLL.Services
     {
         private readonly INewsRepo _newsRepo;
         private readonly IPhotoService _photoService;
+        private readonly IHubContext<NewsHub> _hubContext;
 
-        public NewsService(INewsRepo newsRepo, IPhotoService photoService)
+        public NewsService(INewsRepo newsRepo, IPhotoService photoService, IHubContext<NewsHub> hubContext)
         {
             _newsRepo = newsRepo;
             _photoService = photoService;
+            _hubContext = hubContext;
         }
         public async Task<AuthResultDTO> CreateNewsAsync(CreateNewsDTO newsDTO, Guid id)
         {
@@ -74,22 +79,35 @@ namespace TideOfDestiniy.BLL.Services
 
 
             var result = await _newsRepo.CreateNewsAsync(news);
-            return result
-            ? new AuthResultDTO { Succeeded = true, Message = "News created successfully." }
-            
-            : new AuthResultDTO { Succeeded = false, Message = "Failed to create news." };
+            if (result)
+            {
+                // Chuyển đổi news entity thành NewsDTO để gửi đi
+                // Bạn cần một phương thức để lấy thông tin đầy đủ của News vừa tạo, bao gồm cả Authorname và Images
+                var newNewsDto = await GetNewsById(news.Id); // Tái sử dụng hàm GetNewsById
+
+                // ===> GỬI THÔNG BÁO REAL-TIME <===
+                await _hubContext.Clients.All.SendAsync("ReceiveNewNews", newNewsDto);
+                // "ReceiveNewNews" là tên phương thức mà client sẽ lắng nghe.
+                // newNewsDto là dữ liệu được gửi đi.
+
+                return new AuthResultDTO { Succeeded = true, Message = "News created successfully." };
+            }
+            return new AuthResultDTO { Succeeded = false, Message = "Failed to create news." };
 
         }
 
         public async Task<AuthResultDTO> DeleteNewsAsync(Guid id)
         {
             var result = await _newsRepo.DeleteNewsAsync(id);
-            if (!result)
+            if (result)
             {
-                return new AuthResultDTO { Succeeded = false, Message = "News not found." };
-            }
+                // ===> GỬI THÔNG BÁO REAL-TIME <===
+                // Chỉ cần gửi ID của bài viết đã bị xóa là đủ
+                await _hubContext.Clients.All.SendAsync("ReceiveDeletedNews", id);
 
-            return new AuthResultDTO { Succeeded = true, Message = "News deleted successfully." };
+                return new AuthResultDTO { Succeeded = true, Message = "News deleted successfully." };
+            }
+            return new AuthResultDTO { Succeeded = false, Message = "News not found." };
         }
 
         public async Task<List<NewsDTO>> GetAllNewsAsync(NewsCategory? category = null)
@@ -198,9 +216,16 @@ namespace TideOfDestiniy.BLL.Services
             news.NewsCategory = newsDTO.NewsCategory;
 
             var update = await _newsRepo.UpdateNewsAsync(news);
-            return update
-             ? new AuthResultDTO { Succeeded = true, Message = "News updated successfully." }
-             : new AuthResultDTO { Succeeded = false, Message = "Failed to update news." };
+            if (update)
+            {
+                var updatedNewsDto = await GetNewsById(id);
+
+                // ===> GỬI THÔNG BÁO REAL-TIME <===
+                await _hubContext.Clients.All.SendAsync("ReceiveUpdatedNews", updatedNewsDto);
+
+                return new AuthResultDTO { Succeeded = true, Message = "News updated successfully." };
+            }
+            return new AuthResultDTO { Succeeded = false, Message = "Failed to update news." };
 
 
         }

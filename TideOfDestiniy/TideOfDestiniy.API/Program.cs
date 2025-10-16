@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using TideOfDestiniy.BLL.Hubs;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.BLL.Services;
 using TideOfDestiniy.DAL.Context;
@@ -174,6 +175,9 @@ namespace TideOfDestiniy.API
                 );
             });
             builder.Services.AddScoped<IR2StorageService, R2StorageService>();
+
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -221,6 +225,9 @@ namespace TideOfDestiniy.API
 
 
             app.MapControllers();
+
+            app.MapHub<NewsHub>("/newsHub");
+
 
             app.Run();
         }
