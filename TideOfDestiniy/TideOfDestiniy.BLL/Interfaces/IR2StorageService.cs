@@ -14,5 +14,6 @@ namespace TideOfDestiniy.BLL.Interfaces
         Task<GameFile?> GetFileInfoAsync(int id);
         Task<Stream> DownloadFileAsync(string fileName);
         Task<Stream> DownloadFileByKeyAsync(string key);
+        //Task<Stream> DownloadLastestFileAsync();
     }
 }

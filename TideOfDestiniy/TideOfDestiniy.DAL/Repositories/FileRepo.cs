@@ -40,5 +40,12 @@ namespace TideOfDestiniy.DAL.Repositories
         {
             return await Task.FromResult(_context.GameFiles.ToList());
         }
+
+        public async Task<GameFile?> GetLastestFile()
+        {
+            return await _context.GameFiles
+                         .OrderByDescending(f => f.UploadedAt)
+                         .FirstOrDefaultAsync();
+        }
     }
 }

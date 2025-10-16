@@ -13,5 +13,6 @@ namespace TideOfDestiniy.DAL.Interfaces
         Task<GameFile?> GetByIdAsync(int id);
         Task<GameFile?> GetByFileNameAsync(string fileName);
         Task<IEnumerable<GameFile>> GetAllAsync();
+        Task<GameFile?> GetLastestFile();
     }
 }

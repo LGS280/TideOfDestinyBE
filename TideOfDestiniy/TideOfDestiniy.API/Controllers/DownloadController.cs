@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.DAL.Interfaces;
 
@@ -74,6 +75,26 @@ namespace TideOfDestiniy.API.Controllers
                 var fileStream = await _storageService.DownloadFileByKeyAsync(key);
                 var fileName = Path.GetFileName(key);
                 return File(fileStream, "application/octet-stream", fileName);
+            }
+            catch (AmazonS3Exception ex)
+            {
+                return NotFound($"File not found or error accessing R2: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet("donwload-lastest-file")]
+        public async Task<IActionResult> DownloadlastestFile()
+        {
+            try
+            {
+                var lastestFile = await _service.GetLastestFileAsync();
+                if (lastestFile == null)
+                    return NotFound("File not found in database");
+                var fileStream = await _storageService.DownloadFileAsync(lastestFile.FileName);
+                return File(fileStream, lastestFile.ContentType, lastestFile.FileName);
             }
             catch (AmazonS3Exception ex)
             {
