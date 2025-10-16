@@ -176,6 +176,35 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IR2StorageService, R2StorageService>();
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    // Lấy DbContext từ service container
+                    var context = services.GetRequiredService<TideOfDestinyDbContext>();
+
+                    // Kiểm tra xem có migration nào đang chờ được áp dụng không
+                    if (context.Database.GetPendingMigrations().Any())
+                    {
+                        Console.WriteLine("Applying database migrations...");
+                        // Áp dụng các migration đang chờ
+                        context.Database.Migrate();
+                        Console.WriteLine("Database migrations applied successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Database is up to date. No migrations to apply.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Ghi lại lỗi nếu quá trình migrate thất bại
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while migrating the database.");
+                }
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

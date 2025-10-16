@@ -111,10 +111,11 @@ namespace TideOfDestiniy.DAL.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PasswordHash = table.Column<string>(type: "longtext", nullable: false)
+                    PasswordHash = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastLoginAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    LastLoginAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -135,6 +136,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Version = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    NewsCategory = table.Column<int>(type: "int", nullable: false),
                     PublishedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     AuthorId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
@@ -175,6 +177,32 @@ namespace TideOfDestiniy.DAL.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Url = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PublicId = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AltText = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UploadedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    NewsId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Images_News_NewsId",
+                        column: x => x.NewsId,
+                        principalTable: "News",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "RoleName" },
@@ -183,6 +211,38 @@ namespace TideOfDestiniy.DAL.Migrations
                     { 1, "Admin" },
                     { 2, "Player" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "Email", "EmailConfirmed", "LastLoginAt", "PasswordHash", "Username" },
+                values: new object[,]
+                {
+                    { new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"), new DateTime(2025, 10, 15, 17, 5, 33, 218, DateTimeKind.Utc).AddTicks(1314), "player@gmail.com", true, null, "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW", "player1" },
+                    { new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"), new DateTime(2025, 10, 15, 17, 5, 33, 218, DateTimeKind.Utc).AddTicks(1301), "admin@tideofdestiny.com", true, null, "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW", "admin" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "News",
+                columns: new[] { "Id", "AuthorId", "Content", "ImageUrl", "NewsCategory", "PublishedAt", "Title", "Version" },
+                values: new object[,]
+                {
+                    { new Guid("68a3b597-f9bf-45e7-b9e1-bb5fd6277df7"), new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"), "Nhiều tính năng mới và sửa lỗi...", null, 0, new DateTime(2025, 10, 15, 17, 5, 33, 218, DateTimeKind.Utc).AddTicks(1371), "Bản cập nhật lớn 2.5 đã ra mắt!", "2.5.0" },
+                    { new Guid("710b2d4a-3cc7-41f6-9a1f-2a76633efc66"), new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"), "Tham gia ngay để nhận phần thưởng hấp dẫn...", null, 1, new DateTime(2025, 10, 15, 17, 5, 33, 218, DateTimeKind.Utc).AddTicks(1374), "Sự kiện Mùa Hè Rực Lửa bắt đầu!", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { 2, new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a") },
+                    { 1, new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f") }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_NewsId",
+                table: "Images",
+                column: "NewsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_News_AuthorId",
@@ -223,13 +283,16 @@ namespace TideOfDestiniy.DAL.Migrations
                 name: "GameFiles");
 
             migrationBuilder.DropTable(
-                name: "News");
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "SystemRequirements");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
+
+            migrationBuilder.DropTable(
+                name: "News");
 
             migrationBuilder.DropTable(
                 name: "Roles");

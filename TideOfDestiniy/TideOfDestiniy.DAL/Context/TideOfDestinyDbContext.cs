@@ -20,6 +20,8 @@ namespace TideOfDestiniy.DAL.Context
         public DbSet<SystemRequirement> SystemRequirements { get; set; }
         public DbSet<GameBuild> GameBuilds { get; set; }
         public DbSet<GameFile> GameFiles { get; set; }
+        public DbSet<Image> Images { get; set; }
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -74,6 +76,12 @@ namespace TideOfDestiniy.DAL.Context
             modelBuilder.Entity<GameBuild>()
                 .Property(b => b.Platform)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<News>()
+               .HasMany(n => n.Images) 
+               .WithOne(i => i.News)   
+               .HasForeignKey(i => i.NewsId) 
+               .OnDelete(DeleteBehavior.Cascade);
 
 
             const int ADMIN_ROLE_ID = 1;

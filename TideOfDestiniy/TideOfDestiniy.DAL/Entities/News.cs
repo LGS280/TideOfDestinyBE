@@ -33,6 +33,8 @@ namespace TideOfDestiniy.DAL.Entities
         public Guid AuthorId { get; set; }
         [ForeignKey("AuthorId")]
         public User Author { get; set; }
+        public ICollection<Image> Images { get; set; } = new List<Image>();
+
 
     }
 }

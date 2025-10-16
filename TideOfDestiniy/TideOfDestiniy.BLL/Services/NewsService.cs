@@ -25,27 +25,14 @@ namespace TideOfDestiniy.BLL.Services
         }
         public async Task<AuthResultDTO> CreateNewsAsync(CreateNewsDTO newsDTO, Guid id)
         {
-            string? uploadedImageUrl = null;
+            //string? uploadedImageUrl = null;
 
-            if (newsDTO.ImageUrl != null && newsDTO.ImageUrl.Length > 0)
+            if (string.IsNullOrEmpty(newsDTO.Title) || string.IsNullOrEmpty(newsDTO.Content))
             {
-                // Nếu có, upload nó lên Cloudinary
-                var uploadResult = await _photoService.AddPhotoAsync(newsDTO.ImageUrl);
-
-                // Nếu upload thành công, lấy URL
-                if (uploadResult.Succeeded)
-                {
-                    uploadedImageUrl = uploadResult.Url;
-                }
-                else
-                {
-                    // (Tùy chọn) Xử lý lỗi: ném ra exception hoặc bỏ qua việc thêm ảnh
-                    // Ở đây chúng ta sẽ bỏ qua và tiếp tục tạo bài viết không có ảnh
-                    // logger.LogError("Cloudinary upload failed: {error}", uploadResult.ErrorMessage);
-                }
+                return new AuthResultDTO { Succeeded = false, Message = "Title and Content cannot be empty." };
             }
 
-            if(string.IsNullOrEmpty(newsDTO.Title))
+            if (string.IsNullOrEmpty(newsDTO.Title))
             {
                 return new AuthResultDTO { Succeeded = false, Message = "Title cannot be empty." };
             }
@@ -58,17 +45,39 @@ namespace TideOfDestiniy.BLL.Services
             {
                 Title = newsDTO.Title,
                 Content = newsDTO.Content,
-                ImageUrl = uploadedImageUrl,
+                //ImageUrl = uploadedImageUrl,
                 NewsCategory = newsDTO.NewsCategory,
                 //PublishedAt = newsDTO.PublishedAt,
                 AuthorId = id,
             };
-            var result = await _newsRepo.CreateNewsAsync(news);
-            if (result)
+
+            if (newsDTO.ImageUrl != null && newsDTO.ImageUrl.Any())
             {
-                return new AuthResultDTO { Succeeded = true, Message = "News created successfully." };
+                foreach (var imageFile in newsDTO.ImageUrl)
+                {
+                    var uploadResult = await _photoService.AddPhotoAsync(imageFile); // Giả sử trả về { Succeeded, Url, PublicId }
+                    if (uploadResult.Succeeded)
+                    {
+                        news.Images.Add(new Image
+                        {
+                            Url = uploadResult.Url,
+                            PublicId = uploadResult.PublicId
+                        });
+                    }
+                    else
+                    {
+                        // Xử lý lỗi: có thể bỏ qua ảnh này hoặc trả về lỗi ngay lập tức
+                        return new AuthResultDTO { Succeeded = false, Message = $"Failed to upload image: {uploadResult.ErrorMessage}" };
+                    }
+                }
             }
-            return new AuthResultDTO { Succeeded = false, Message = "Failed to create news." };
+
+
+            var result = await _newsRepo.CreateNewsAsync(news);
+            return result
+            ? new AuthResultDTO { Succeeded = true, Message = "News created successfully." }
+            
+            : new AuthResultDTO { Succeeded = false, Message = "Failed to create news." };
 
         }
 
@@ -92,7 +101,11 @@ namespace TideOfDestiniy.BLL.Services
                 Title = n.Title,
                 Content = n.Content,
                 PublishedAt = n.PublishedAt,
-                ImageUrl = n.ImageUrl,
+                ImageUrls = n.Images.Select(img => new ImageDTO
+                {
+                    Id = img.Id,
+                    Url = img.Url
+                }).ToList(),
                 AuthorId = n.AuthorId,
                 NewsCategory = n.NewsCategory,
                 Authorname = n.Author != null ? n.Author.Username : "Unknown"
@@ -112,7 +125,11 @@ namespace TideOfDestiniy.BLL.Services
                 Content = news.Content,
                 PublishedAt = news.PublishedAt,
                 AuthorId = news.AuthorId,
-                ImageUrl = news.ImageUrl,
+                ImageUrls = news.Images.Select(img => new ImageDTO
+                {
+                    Id = img.Id,
+                    Url = img.Url
+                }).ToList(),
                 NewsCategory = news.NewsCategory,
                 Authorname = news.Author != null ? news.Author.Username : "Unknown"
             };
@@ -126,33 +143,34 @@ namespace TideOfDestiniy.BLL.Services
                 return new AuthResultDTO { Succeeded = false, Message = "News not found." };
             }
 
-            string? finalImageUrl = news.ImageUrl;
-
-            if (newsDTO.ImageUrl != null && newsDTO.ImageUrl.Length > 0)
+            // 1. Xóa các ảnh được yêu cầu
+            if (newsDTO.DeletedImageIds != null && newsDTO.DeletedImageIds.Any())
             {
-                // Xóa ảnh cũ trên Cloudinary nếu có
-                if (!string.IsNullOrEmpty(news.ImageUrl))
-                {
-                    // Cần một hàm để trích xuất PublicId từ URL
-                    var publicId = GetPublicIdFromUrl(news.ImageUrl);
-                    if (publicId != null)
-                    {
-                        await _photoService.DeletePhotoAsync(publicId);
-                    }
-                }
+                // Lấy các ảnh cần xóa từ DB
+                var imagesToDelete = news.Images
+                                         .Where(img => newsDTO.DeletedImageIds.Contains(img.Id))
+                                         .ToList();
 
-                // Upload ảnh mới
-                var uploadResult = await _photoService.AddPhotoAsync(newsDTO.ImageUrl);
-                if (uploadResult.Succeeded)
+                foreach (var image in imagesToDelete)
                 {
-                    finalImageUrl = uploadResult.Url; // Cập nhật URL mới
-                }
-                else
-                {
-                    // (Tùy chọn) Xử lý lỗi upload, có thể trả về lỗi hoặc tiếp tục mà không đổi ảnh
-                    return new AuthResultDTO { Succeeded = false, Message = $"Photo upload failed: {uploadResult.ErrorMessage}" };
+                    await _photoService.DeletePhotoAsync(image.PublicId); // Xóa khỏi Cloudinary
+                    news.Images.Remove(image); // Xóa khỏi collection (EF sẽ xóa khỏi DB khi SaveChanges)
                 }
             }
+
+            // 2. Thêm các ảnh mới
+            if (newsDTO.ImageUrl != null && newsDTO.ImageUrl.Any())
+            {
+                foreach (var imageFile in newsDTO.ImageUrl)
+                {
+                    var uploadResult = await _photoService.AddPhotoAsync(imageFile);
+                    if (uploadResult.Succeeded)
+                    {
+                        news.Images.Add(new Image { Url = uploadResult.Url, PublicId = uploadResult.PublicId });
+                    }
+                }
+            }
+
             //// Trường hợp 2: Người dùng muốn xóa ảnh hiện tại (và không upload ảnh mới)
             //else if (newsDTO.RemoveCurrentImage && !string.IsNullOrEmpty(news.ImageUrl))
             //{
@@ -164,7 +182,7 @@ namespace TideOfDestiniy.BLL.Services
             //    finalImageUrl = null; // Xóa URL khỏi database
             //}
 
-            if(string.IsNullOrEmpty(newsDTO.Title))
+            if (string.IsNullOrEmpty(newsDTO.Title))
             {
                 return new AuthResultDTO { Succeeded = false, Message = "Title cannot be empty." };
             }
@@ -176,16 +194,15 @@ namespace TideOfDestiniy.BLL.Services
 
             news.Title = newsDTO.Title;
             news.Content = newsDTO.Content;
-            news.ImageUrl = finalImageUrl;
+            //news.ImageUrl = finalImageUrl;
             news.NewsCategory = newsDTO.NewsCategory;
 
             var update = await _newsRepo.UpdateNewsAsync(news);
-            if (!update)
-            {
-                return new AuthResultDTO { Succeeded = false, Message = "Failed to update news." };
-            }
+            return update
+             ? new AuthResultDTO { Succeeded = true, Message = "News updated successfully." }
+             : new AuthResultDTO { Succeeded = false, Message = "Failed to update news." };
 
-            return new AuthResultDTO { Succeeded = true, Message = "News updated successfully." };
+
         }
 
         private string? GetPublicIdFromUrl(string url)
