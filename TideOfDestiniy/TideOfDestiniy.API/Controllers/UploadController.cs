@@ -35,5 +35,15 @@ namespace TideOfDestiniy.API.Controllers
                 file = result
             });
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllUploadedFileFromLocalDatabase()
+        {
+            var result = await _service.GetAllFilesAsync();
+            return Ok(new
+            {
+                message = "Retrieve Success!",
+                file = result
+            });
+        }
     }
 }
