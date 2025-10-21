@@ -84,5 +84,22 @@ namespace TideOfDestiniy.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("donwload-lastest-file")]
+        public async Task<IActionResult> DownloadlastestFile()
+        {
+            try
+            {
+                var (fileBytes, fileName) = await _storageService.DownloadLatestFileAsync();
+                return File(fileBytes, "application/x-zip-compressed", fileName);
+            }
+            catch (AmazonS3Exception ex)
+            {
+                return NotFound($"File not found or error accessing R2: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

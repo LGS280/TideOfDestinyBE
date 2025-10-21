@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace TideOfDestiniy.BLL.Interfaces
     public interface IUploadService : IDisposable
     {
         Task<GameFile> UploadToR2Async(Stream fileStream, string fileName, string contentType);
+
+        Task<List<S3Object>> GetAllFilesAsync();
     }
 }
