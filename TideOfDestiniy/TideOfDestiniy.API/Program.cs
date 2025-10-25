@@ -183,7 +183,7 @@ namespace TideOfDestiniy.API
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
