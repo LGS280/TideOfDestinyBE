@@ -20,11 +20,34 @@ namespace TideOfDestiniy.DAL.Repositories
             _context = context;
         }
 
+        public async Task<User> CreateUserAsync(User user)
+        {
+            var defaultRole = await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == "Player");
+            if (defaultRole != null)
+            {
+                user.UserRoles = new List<UserRole> { new UserRole { Role = defaultRole } };
+            }
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user;
+        }
+
         public async Task<List<User>?> GetUserAsync() => 
             await _context.Users
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                 .ToListAsync();
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(m => m.Email.ToLower() == email.ToLower());
+        }
+
+        public async Task<User?> GetUserByIdAsync(Guid id)
+        {
+            return await _context.Users.FindAsync(id);
+        }
 
         public async Task<User?> LoginAsync(string username, string password)
         {
@@ -76,6 +99,13 @@ namespace TideOfDestiniy.DAL.Repositories
             await _context.SaveChangesAsync();
 
             return user;
+        }
+
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

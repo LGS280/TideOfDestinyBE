@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using TideOfDestiniy.BLL.DTOs;
+using TideOfDestiniy.BLL.DTOs.Requests;
+using TideOfDestiniy.BLL.DTOs.Responses;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.BLL.Services;
 
@@ -11,15 +12,17 @@ namespace TideOfDestiniy.API.Controllers
     public class AuthController : ControllerBase
     {
         private IUserService _userService;
+        private IAuthService _authService;
 
-        public AuthController(IUserService userService)
+        public AuthController(IUserService userService, IAuthService authService)
         {
             _userService = userService;
+            _authService = authService;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDto)
-        {
+        { 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -52,6 +55,21 @@ namespace TideOfDestiniy.API.Controllers
 
             // Trả về token cho client
             return Ok(new { message = "Login Successful" ,token = result.Token });
+        }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDTO googleLoginDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _authService.LoginWithGoogleAsync(googleLoginDto);
+            if (result == null || !result.Succeeded)
+            {
+                return Unauthorized(new { message = result?.Message ?? "Google login failed." });
+            }
+            return Ok(new { message = "Google login successful.", token = result.Token });
         }
     }
 }

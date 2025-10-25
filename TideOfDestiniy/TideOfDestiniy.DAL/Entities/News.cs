@@ -24,6 +24,9 @@ namespace TideOfDestiniy.DAL.Entities
         [StringLength(20)]
         public string? Version { get; set; } // Phiên bản game liên quan
 
+        [Required]
+        public NewsCategory NewsCategory { get; set; }
+
         public DateTime PublishedAt { get; set; } = DateTime.UtcNow;
 
         // Foreign key to the User who authored this news

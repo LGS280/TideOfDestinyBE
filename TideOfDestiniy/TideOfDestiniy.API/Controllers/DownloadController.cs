@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.DAL.Interfaces;
 

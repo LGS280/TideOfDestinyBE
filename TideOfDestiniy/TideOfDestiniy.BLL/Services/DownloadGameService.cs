@@ -39,10 +39,10 @@ namespace TideOfDestiniy.BLL.Services
         }
 
 
-        //public async Task<GameFile?> GetLastestFileAsync()
-        //{
-        //    return await _repo.GetLastestFile();
-        //}
+        public async Task<GameFile?> GetLastestFileAsync()
+        {
+            return await _repo.GetLastestFile();
+        }
 
     }
 }

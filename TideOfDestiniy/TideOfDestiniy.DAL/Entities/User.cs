@@ -19,14 +19,14 @@ namespace TideOfDestiniy.DAL.Entities
         [MaxLength(100)]
         public string Email { get; set; }
 
-        [Required]
-        public string PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginAt { get; set; }
 
         // Navigation Properties (Quan hệ)
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public bool EmailConfirmed { get; set; }
         //public ICollection<SupportTicket> SupportTickets { get; set; } = new List<SupportTicket>();
 
     }

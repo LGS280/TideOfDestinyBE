@@ -13,8 +13,8 @@ using TideOfDestiniy.DAL.Context;
 namespace TideOfDestiniy.DAL.Migrations
 {
     [DbContext(typeof(TideOfDestinyDbContext))]
-    [Migration("20251003024726_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250917141750_add-email-confirm")]
+    partial class addemailconfirm
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,37 +59,6 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GameBuilds");
-                });
-
-            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.GameFile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("DownloadUrl")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<long>("Size")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GameFiles");
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
@@ -219,6 +188,9 @@ namespace TideOfDestiniy.DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("datetime(6)");

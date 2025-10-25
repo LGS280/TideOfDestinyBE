@@ -104,6 +104,9 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.Property<string>("ImageUrl")
                         .HasColumnType("longtext");
 
+                    b.Property<int>("NewsCategory")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("datetime(6)");
 
@@ -121,6 +124,27 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("News");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("7cf5e7bc-ac7b-46c9-8aae-94801d653d21"),
+                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            Content = "Nhiều tính năng mới và sửa lỗi...",
+                            NewsCategory = 0,
+                            PublishedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(6043),
+                            Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
+                            Version = "2.5.0"
+                        },
+                        new
+                        {
+                            Id = new Guid("2100788f-4caf-4cf8-a76d-6a7105502304"),
+                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
+                            NewsCategory = 1,
+                            PublishedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(6046),
+                            Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
+                        });
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Role", b =>
@@ -216,11 +240,13 @@ namespace TideOfDestiniy.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Username")
@@ -237,6 +263,26 @@ namespace TideOfDestiniy.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
+                            CreatedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(5961),
+                            Email = "admin@tideofdestiny.com",
+                            EmailConfirmed = true,
+                            PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
+                            Username = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            CreatedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(5983),
+                            Email = "player@gmail.com",
+                            EmailConfirmed = true,
+                            PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
+                            Username = "player1"
+                        });
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.UserRole", b =>
@@ -252,6 +298,18 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            RoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
