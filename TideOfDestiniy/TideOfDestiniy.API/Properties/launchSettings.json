@@ -37,5 +37,13 @@
         "ASPNETCORE_HTTP_PORTS": "8080"
       }
     }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:54580/",
+      "sslPort": 44331
+    }
   }
 }
