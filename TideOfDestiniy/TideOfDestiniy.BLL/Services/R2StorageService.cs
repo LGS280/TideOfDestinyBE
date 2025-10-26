@@ -10,17 +10,20 @@ using TideOfDestiniy.BLL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using TideOfDestiniy.DAL.Entities;
 using TideOfDestiniy.DAL.Context;
+using TideOfDestiniy.DAL.Interfaces;
 
 namespace TideOfDestiniy.BLL.Services
 {
     public class R2StorageService : IR2StorageService
     {
+        private readonly IUploadService _uploadRepo;
         private readonly IAmazonS3 _s3Client;
         private readonly TideOfDestinyDbContext _dbContext;
         private readonly string _bucketName;
 
-        public R2StorageService(IAmazonS3 s3Client, TideOfDestinyDbContext dbContext, IConfiguration config)
+        public R2StorageService(IAmazonS3 s3Client, TideOfDestinyDbContext dbContext, IConfiguration config, IUploadService uploadRepo)
         {
+            _uploadRepo = uploadRepo;
             _s3Client = s3Client;
             _dbContext = dbContext;
             _bucketName = config["R2Storage:BucketName"]!;
@@ -78,6 +81,35 @@ namespace TideOfDestiniy.BLL.Services
 
             var response = await _s3Client.GetObjectAsync(request);
             return response.ResponseStream;
+        }
+
+        public async Task<(byte[] FileBytes, string FileName)> DownloadLatestFileAsync()
+        {
+            var listRequest = new ListObjectsV2Request
+            {
+                BucketName = _bucketName
+            };
+
+            var response = await _s3Client.ListObjectsV2Async(listRequest);
+
+            if (response.S3Objects == null || response.S3Objects.Count == 0)
+                throw new Exception("No files found in the R2 bucket.");
+
+            // 🔍 Find the most recently uploaded file
+            var latestFile = response.S3Objects.OrderByDescending(f => f.LastModified).First();
+
+            var getRequest = new GetObjectRequest
+            {
+                BucketName = _bucketName,
+                Key = latestFile.Key
+            };
+
+            using (var getResponse = await _s3Client.GetObjectAsync(getRequest))
+            using (var memoryStream = new MemoryStream())
+            {
+                await getResponse.ResponseStream.CopyToAsync(memoryStream);
+                return (memoryStream.ToArray(), latestFile.Key);
+            }
         }
     }
 }

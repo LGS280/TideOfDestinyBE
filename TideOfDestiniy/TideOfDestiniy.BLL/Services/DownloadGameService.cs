@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Amazon.S3.Model;
+using Microsoft.Extensions.Configuration;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.DAL.Entities;
 using TideOfDestiniy.DAL.Interfaces;
@@ -37,9 +38,11 @@ namespace TideOfDestiniy.BLL.Services
             return await response.Content.ReadAsStreamAsync();
         }
 
+
         public async Task<GameFile?> GetLastestFileAsync()
         {
             return await _repo.GetLastestFile();
         }
+
     }
 }

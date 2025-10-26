@@ -90,9 +90,22 @@ namespace TideOfDestiniy.BLL.Services
             }
         }
 
+        
+
         public void Dispose()
         {
             _s3Client?.Dispose();
+        }
+
+        public async Task<List<S3Object>> GetAllFilesAsync()
+        {
+            var request = new ListObjectsV2Request
+            {
+                BucketName = _bucketName
+            };
+
+            var response = await _s3Client.ListObjectsV2Async(request);
+            return response.S3Objects;
         }
     }
 }

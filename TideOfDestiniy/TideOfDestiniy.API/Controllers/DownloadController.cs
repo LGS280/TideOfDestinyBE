@@ -90,11 +90,8 @@ namespace TideOfDestiniy.API.Controllers
         {
             try
             {
-                var lastestFile = await _service.GetLastestFileAsync();
-                if (lastestFile == null)
-                    return NotFound("File not found in database");
-                var fileStream = await _storageService.DownloadFileAsync(lastestFile.FileName);
-                return File(fileStream, lastestFile.ContentType, lastestFile.FileName);
+                var (fileBytes, fileName) = await _storageService.DownloadLatestFileAsync();
+                return File(fileBytes, "application/x-zip-compressed", fileName);
             }
             catch (AmazonS3Exception ex)
             {
