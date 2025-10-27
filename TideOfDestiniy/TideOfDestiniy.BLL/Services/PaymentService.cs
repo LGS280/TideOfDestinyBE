@@ -19,10 +19,12 @@ namespace TideOfDestiniy.BLL.Services
         private readonly PayOS _payOS;
         private readonly IOrderRepo _orderRepo;
         private readonly IUserRepo _userRepo;
-        private const decimal GamePrice = 250000; // Đặt giá game cố định ở đây (ví dụ: 250,000 VND)
-        private const string GameDescription = "Purchase Tide of Destiny Game";
+        private readonly IProductRepo _productRepo;
 
-        public PaymentService(IConfiguration configuration, IOrderRepo orderRepo, IUserRepo userRepo)
+        //private const decimal GamePrice = 250000;
+        //private const string GameDescription = "Purchase Tide of Destiny Game";
+
+        public PaymentService(IConfiguration configuration, IOrderRepo orderRepo, IUserRepo userRepo, IProductRepo productRepo)
         {
             var clientId = configuration["PayOsSettings:ClientId"];
             var apiKey = configuration["PayOsSettings:ApiKey"];
@@ -30,6 +32,7 @@ namespace TideOfDestiniy.BLL.Services
             _payOS = new PayOS(clientId, apiKey, checksumKey);
             _orderRepo = orderRepo;
             _userRepo = userRepo;
+            _productRepo = productRepo;
         }
         public async Task<string> CreatePaymentLink(Guid userId, string returnUrl, string cancelUrl)
         {
@@ -38,14 +41,16 @@ namespace TideOfDestiniy.BLL.Services
                 throw new InvalidOperationException("You have already purchased this game.");
             }
 
+            var gameProduct = await _productRepo.GetMainGameProductAsync();
+
             int orderCode = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
             var newOrder = new Order
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 Status = OrderStatus.Pending,
-                Amount = GamePrice,
-                Description = GameDescription,
+                Amount = gameProduct.Price,
+                Description = gameProduct.Description,
                 PaymentOrderCode = orderCode
             };
 

@@ -79,6 +79,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<ISystemRequirementRepo, SystemRequirementRepo>();
             builder.Services.AddScoped<IFileRepo, FileRepo>();
             builder.Services.AddScoped<IOrderRepo, OrderRepo>();
+            builder.Services.AddScoped<IProductRepo, ProductRepo>();
 
             builder.Services.AddHttpClient();
 
