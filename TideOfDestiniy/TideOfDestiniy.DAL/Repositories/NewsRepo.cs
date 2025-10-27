@@ -39,6 +39,7 @@ namespace TideOfDestiniy.DAL.Repositories
         {
             var query = _context.News
                             .Include(n => n.Author)
+                            .Include(n => n.Images)
                             .AsQueryable();
 
             if (newsCategory.HasValue)
@@ -55,6 +56,7 @@ namespace TideOfDestiniy.DAL.Repositories
         public Task<News?> GetNewsByIdAsync(Guid id) => 
             _context.News
                 .Include(n => n.Author)
+                .Include(n => n.Images)
                 .FirstOrDefaultAsync(n => n.Id == id);
 
         public async Task<bool> UpdateNewsAsync(News news)

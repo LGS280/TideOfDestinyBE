@@ -12,8 +12,10 @@ namespace TideOfDestiniy.BLL.DTOs.Requests
     {
         public string Title { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
-        public IFormFile? ImageUrl { get; set; }
+        public List<IFormFile>? ImageUrl { get; set; }
         public NewsCategory NewsCategory { get; set; }
+        public List<Guid>? DeletedImageIds { get; set; }
+
         //public bool RemoveCurrentImage { get; set; } = false;
 
         //public string Version { get; set; } = string.Empty;

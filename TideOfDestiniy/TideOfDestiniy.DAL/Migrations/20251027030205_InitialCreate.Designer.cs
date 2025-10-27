@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TideOfDestiniy.DAL.Context;
 
 #nullable disable
@@ -12,8 +12,8 @@ using TideOfDestiniy.DAL.Context;
 namespace TideOfDestiniy.DAL.Migrations
 {
     [DbContext(typeof(TideOfDestinyDbContext))]
-    [Migration("20250927160210_update-user-password-nullable")]
-    partial class updateuserpasswordnullable
+    [Migration("20251027030205_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,75 +21,136 @@ namespace TideOfDestiniy.DAL.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.20")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.GameBuild", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DownloadUrl")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<int>("FileSizeMB")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsLatest")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Platform")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Version")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.HasKey("Id");
 
                     b.ToTable("GameBuilds");
                 });
 
+            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.GameFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DownloadUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GameFiles");
+                });
+
+            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Image", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AltText")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("NewsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NewsId");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("AuthorId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<int>("NewsCategory")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("PublishedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Version")
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.HasKey("Id");
 
@@ -100,21 +161,21 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e1be7317-abdf-4a6a-89d9-f0fecbf8db4c"),
+                            Id = new Guid("bd11cb8b-5268-474b-8220-7ec420db44d2"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Nhiều tính năng mới và sửa lỗi...",
                             NewsCategory = 0,
-                            PublishedAt = new DateTime(2025, 9, 27, 16, 2, 10, 10, DateTimeKind.Utc).AddTicks(7117),
+                            PublishedAt = new DateTime(2025, 10, 27, 3, 2, 5, 501, DateTimeKind.Utc).AddTicks(2708),
                             Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
                             Version = "2.5.0"
                         },
                         new
                         {
-                            Id = new Guid("57fd4eb0-0e2f-49c1-af4e-7864dee3acd9"),
+                            Id = new Guid("b7d471c4-ed2b-46db-aa4d-2fa46911d22b"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
                             NewsCategory = 1,
-                            PublishedAt = new DateTime(2025, 9, 27, 16, 2, 10, 10, DateTimeKind.Utc).AddTicks(7120),
+                            PublishedAt = new DateTime(2025, 10, 27, 3, 2, 5, 501, DateTimeKind.Utc).AddTicks(2720),
                             Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
                         });
                 });
@@ -123,14 +184,14 @@ namespace TideOfDestiniy.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -156,42 +217,42 @@ namespace TideOfDestiniy.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DirectXVersion")
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Graphics")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("Memory")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("OS")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Processor")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("Storage")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -202,30 +263,29 @@ namespace TideOfDestiniy.DAL.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("LastLoginAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -241,7 +301,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
-                            CreatedAt = new DateTime(2025, 9, 27, 16, 2, 10, 10, DateTimeKind.Utc).AddTicks(7040),
+                            CreatedAt = new DateTime(2025, 10, 27, 3, 2, 5, 501, DateTimeKind.Utc).AddTicks(2636),
                             Email = "admin@tideofdestiny.com",
                             EmailConfirmed = true,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
@@ -250,7 +310,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            CreatedAt = new DateTime(2025, 9, 27, 16, 2, 10, 10, DateTimeKind.Utc).AddTicks(7054),
+                            CreatedAt = new DateTime(2025, 10, 27, 3, 2, 5, 501, DateTimeKind.Utc).AddTicks(2649),
                             Email = "player@gmail.com",
                             EmailConfirmed = true,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
@@ -261,10 +321,10 @@ namespace TideOfDestiniy.DAL.Migrations
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.UserRole", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -283,6 +343,17 @@ namespace TideOfDestiniy.DAL.Migrations
                             UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             RoleId = 2
                         });
+                });
+
+            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Image", b =>
+                {
+                    b.HasOne("TideOfDestiniy.DAL.Entities.News", "News")
+                        .WithMany("Images")
+                        .HasForeignKey("NewsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("News");
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
@@ -313,6 +384,11 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Role", b =>

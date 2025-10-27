@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using TideOfDestiniy.BLL.Hubs;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.BLL.Services;
 using TideOfDestiniy.DAL.Context;
@@ -32,7 +33,7 @@ namespace TideOfDestiniy.API
             //CONNECT DB
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<TideOfDestinyDbContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+                options.UseNpgsql(connectionString));
 
             // Đọc cấu hình JWT từ appsettings.json
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -69,6 +70,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IDownloadGameService, DownloadGameService>();
             builder.Services.AddScoped<IR2StorageService, R2StorageService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 
             //Add Repositories
@@ -76,6 +78,8 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<INewsRepo, NewsRepo>();
             builder.Services.AddScoped<ISystemRequirementRepo, SystemRequirementRepo>();
             builder.Services.AddScoped<IFileRepo, FileRepo>();
+            builder.Services.AddScoped<IOrderRepo, OrderRepo>();
+            builder.Services.AddScoped<IProductRepo, ProductRepo>();
 
             builder.Services.AddHttpClient();
 
@@ -174,7 +178,39 @@ namespace TideOfDestiniy.API
                 );
             });
             builder.Services.AddScoped<IR2StorageService, R2StorageService>();
+
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    // Lấy DbContext từ service container
+                    var context = services.GetRequiredService<TideOfDestinyDbContext>();
+
+                    // Kiểm tra xem có migration nào đang chờ được áp dụng không
+                    if (context.Database.GetPendingMigrations().Any())
+                    {
+                        Console.WriteLine("Applying database migrations...");
+                        // Áp dụng các migration đang chờ
+                        context.Database.Migrate();
+                        Console.WriteLine("Database migrations applied successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Database is up to date. No migrations to apply.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Ghi lại lỗi nếu quá trình migrate thất bại
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while migrating the database.");
+                }
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -192,6 +228,9 @@ namespace TideOfDestiniy.API
 
 
             app.MapControllers();
+
+            app.MapHub<NewsHub>("/newsHub");
+
 
             app.Run();
         }

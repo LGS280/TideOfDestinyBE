@@ -21,6 +21,8 @@ namespace TideOfDestiniy.DAL.Entities
 
         public string? PasswordHash { get; set; }
 
+        public bool HasPurchasedGame { get; set; } = false;
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginAt { get; set; }
 

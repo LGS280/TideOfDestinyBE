@@ -43,8 +43,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:51247/",
-      "sslPort": 44323
+      "applicationUrl": "http://localhost:https://github.com/LGS280/TideOfDestinyBE.git/",
+      "sslPort": 44333
     }
   }
 }
