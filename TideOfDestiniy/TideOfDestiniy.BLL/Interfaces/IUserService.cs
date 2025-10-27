@@ -15,5 +15,6 @@ namespace TideOfDestiniy.BLL.Interfaces
         Task<AuthResultDTO> LoginAsync(LoginDTO loginDTO);
         Task<bool> UserExistsAsync(string username);
         Task<List<UserDTO>?> GetUserAsync();
+        Task<User?> GetUserAsync(Guid userId);  
     }
 }

@@ -33,7 +33,7 @@ namespace TideOfDestiniy.API
             //CONNECT DB
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<TideOfDestinyDbContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+                options.UseNpgsql(connectionString));
 
             // Đọc cấu hình JWT từ appsettings.json
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -70,6 +70,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IDownloadGameService, DownloadGameService>();
             builder.Services.AddScoped<IR2StorageService, R2StorageService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 
             //Add Repositories
@@ -77,6 +78,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<INewsRepo, NewsRepo>();
             builder.Services.AddScoped<ISystemRequirementRepo, SystemRequirementRepo>();
             builder.Services.AddScoped<IFileRepo, FileRepo>();
+            builder.Services.AddScoped<IOrderRepo, OrderRepo>();
 
             builder.Services.AddHttpClient();
 

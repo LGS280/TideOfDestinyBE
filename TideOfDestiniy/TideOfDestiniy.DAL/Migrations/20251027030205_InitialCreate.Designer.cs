@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TideOfDestiniy.DAL.Context;
@@ -11,9 +12,11 @@ using TideOfDestiniy.DAL.Context;
 namespace TideOfDestiniy.DAL.Migrations
 {
     [DbContext(typeof(TideOfDestinyDbContext))]
-    partial class TideOfDestinyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251027030205_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,86 +161,23 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7f51d5ab-65fb-4608-b91d-adae10a9c991"),
+                            Id = new Guid("bd11cb8b-5268-474b-8220-7ec420db44d2"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Nhiều tính năng mới và sửa lỗi...",
                             NewsCategory = 0,
-                            PublishedAt = new DateTime(2025, 10, 27, 12, 34, 0, 680, DateTimeKind.Utc).AddTicks(8301),
+                            PublishedAt = new DateTime(2025, 10, 27, 3, 2, 5, 501, DateTimeKind.Utc).AddTicks(2708),
                             Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
                             Version = "2.5.0"
                         },
                         new
                         {
-                            Id = new Guid("ece1eceb-be7d-4b75-a14f-b8767d2ca07c"),
+                            Id = new Guid("b7d471c4-ed2b-46db-aa4d-2fa46911d22b"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
                             NewsCategory = 1,
-                            PublishedAt = new DateTime(2025, 10, 27, 12, 34, 0, 680, DateTimeKind.Utc).AddTicks(8304),
+                            PublishedAt = new DateTime(2025, 10, 27, 3, 2, 5, 501, DateTimeKind.Utc).AddTicks(2720),
                             Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
                         });
-                });
-
-            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Order", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("PaymentLinkId")
-                        .HasColumnType("text");
-
-                    b.Property<int>("PaymentOrderCode")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Product", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Role", b =>
@@ -336,9 +276,6 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("HasPurchasedGame")
-                        .HasColumnType("boolean");
-
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -364,20 +301,18 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
-                            CreatedAt = new DateTime(2025, 10, 27, 12, 34, 0, 680, DateTimeKind.Utc).AddTicks(8217),
+                            CreatedAt = new DateTime(2025, 10, 27, 3, 2, 5, 501, DateTimeKind.Utc).AddTicks(2636),
                             Email = "admin@tideofdestiny.com",
                             EmailConfirmed = true,
-                            HasPurchasedGame = false,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
                             Username = "admin"
                         },
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            CreatedAt = new DateTime(2025, 10, 27, 12, 34, 0, 680, DateTimeKind.Utc).AddTicks(8227),
+                            CreatedAt = new DateTime(2025, 10, 27, 3, 2, 5, 501, DateTimeKind.Utc).AddTicks(2649),
                             Email = "player@gmail.com",
                             EmailConfirmed = true,
-                            HasPurchasedGame = false,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
                             Username = "player1"
                         });
@@ -430,17 +365,6 @@ namespace TideOfDestiniy.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
-                });
-
-            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Order", b =>
-                {
-                    b.HasOne("TideOfDestiniy.DAL.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.UserRole", b =>

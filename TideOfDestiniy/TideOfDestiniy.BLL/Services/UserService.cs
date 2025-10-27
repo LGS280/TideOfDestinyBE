@@ -38,6 +38,11 @@ namespace TideOfDestiniy.BLL.Services
             }).ToList();   
         }
 
+        public async Task<User?> GetUserAsync(Guid userId)
+        {
+            return await _userRepo.GetUserByIdAsync(userId);
+        }
+
         public async Task<AuthResultDTO?> LoginAsync(LoginDTO loginDto)
         {
             var user = await _userRepo.LoginAsync(loginDto.Username, loginDto.Password);

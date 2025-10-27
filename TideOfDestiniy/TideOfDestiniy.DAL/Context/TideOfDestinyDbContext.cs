@@ -21,7 +21,8 @@ namespace TideOfDestiniy.DAL.Context
         public DbSet<GameBuild> GameBuilds { get; set; }
         public DbSet<GameFile> GameFiles { get; set; }
         public DbSet<Image> Images { get; set; }
-
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
