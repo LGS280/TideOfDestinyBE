@@ -89,7 +89,7 @@ namespace TideOfDestiniy.BLL.Services
 
             long orderCode = webhookData.orderCode;
             var order = await _orderRepo.GetByPaymentOrderCodeAsync((int)(orderCode % int.MaxValue));
-
+            Console.WriteLine($"✅ Webhook hit: orderCode={webhookData.orderCode}, code={webhookData.code}");
             if (order == null || order.Status != OrderStatus.Pending)
             {
                 return;
@@ -114,10 +114,37 @@ namespace TideOfDestiniy.BLL.Services
                 order.Status = OrderStatus.Failed;
             }
 
-            Console.WriteLine($"✅ Webhook hit: orderCode={webhookData.orderCode}, code={webhookData.code}");
-
             await _orderRepo.UpdateAsync(order);
             await _orderRepo.SaveChangesAsync();
         }
+
+        public async Task<bool> ConfirmPayment(long orderCode)
+        {
+            // Gọi PayOS để kiểm tra trạng thái đơn hàng
+            var paymentLinkInfo = await _payOS.getPaymentLinkInformation(orderCode);
+
+            if (paymentLinkInfo.status == "PAID")
+            {
+                var order = await _orderRepo.GetByPaymentOrderCodeAsync((int)(orderCode % int.MaxValue));
+                if (order == null) return false;
+
+                order.Status = OrderStatus.Paid;
+
+                var user = await _userRepo.GetUserByIdAsync(order.UserId);
+                if (user != null)
+                {
+                    user.HasPurchasedGame = true;
+                    await _userRepo.UpdateUserAsync(user);
+                }
+
+                await _orderRepo.UpdateAsync(order);
+                await _orderRepo.SaveChangesAsync();
+
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }

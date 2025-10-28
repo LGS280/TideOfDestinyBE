@@ -13,6 +13,8 @@ namespace TideOfDestiniy.BLL.Interfaces
         Task<string> CreatePaymentLink(Guid userId, string returnUrl, string cancelUrl);
 
         Task HandleWebhook(WebhookData webhookData);
+        Task<bool> ConfirmPayment(long orderCode);
+
 
     }
 }
