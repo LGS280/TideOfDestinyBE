@@ -71,7 +71,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IR2StorageService, R2StorageService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
-            builder.Services.AddScoped<IProductRepo, ProductRepo>();
+            builder.Services.AddScoped<IProductService, ProductService>();
 
 
             //Add Repositories

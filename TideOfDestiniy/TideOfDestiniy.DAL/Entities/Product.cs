@@ -14,7 +14,7 @@ namespace TideOfDestiniy.DAL.Entities
         public string Name { get; set; } // Ví dụ: "Tide of Destiny - Full Game"
 
         [MaxLength(1000)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18, 2)")]
