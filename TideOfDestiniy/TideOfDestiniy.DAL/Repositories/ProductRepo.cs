@@ -23,7 +23,7 @@ namespace TideOfDestiniy.DAL.Repositories
         {
             // Lấy sản phẩm đầu tiên tìm thấy trong bảng.
             // Vì chỉ có 1 game, cách này là đơn giản và hiệu quả.
-            var product = await _context.Products.FirstOrDefaultAsync();
+            var product = await _context.Products.FirstOrDefaultAsync(p => (p.Name == "TideOfDestinyGame" || p.Name == "TideOfDestiny") && p.Price == 35000);
             if (product == null)
             {
                 throw new Exception("No product has been configured in the database.");
