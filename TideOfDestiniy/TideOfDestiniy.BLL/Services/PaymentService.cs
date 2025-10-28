@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CloudinaryDotNet;
+using Microsoft.Extensions.Configuration;
 using Net.payOS;
 using Net.payOS.Types;
 using System;
@@ -42,17 +43,19 @@ namespace TideOfDestiniy.BLL.Services
             }
 
             var gameProduct = await _productRepo.GetMainGameProductAsync();
-
+            if (gameProduct == null)
+                throw new Exception("Main game product not found in database!");
             int orderCode = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
             var newOrder = new Order
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 Status = OrderStatus.Pending,
-                Amount = gameProduct.Price,
-                Description = gameProduct.Description,
+                Amount = gameProduct.Price > 0 ? gameProduct.Price : 250000,
+                Description = string.IsNullOrWhiteSpace(gameProduct.Description)? "Tide of Destiny": gameProduct.Description,
                 PaymentOrderCode = orderCode
             };
+
 
             await _orderRepo.AddAsync(newOrder);
             await _orderRepo.SaveChangesAsync();
@@ -64,7 +67,8 @@ namespace TideOfDestiniy.BLL.Services
 
             var paymentData = new PaymentData(
                 orderCode,
-                (int)newOrder.Amount,
+            
+                (int)Math.Round(newOrder.Amount),
                 newOrder.Description,
                 items, // <<== Phải truyền danh sách item vào
                 cancelUrl,
@@ -89,7 +93,7 @@ namespace TideOfDestiniy.BLL.Services
 
             long orderCode = webhookData.orderCode;
             var order = await _orderRepo.GetByPaymentOrderCodeAsync((int)(orderCode % int.MaxValue));
-
+            Console.WriteLine($"✅ Webhook hit: orderCode={webhookData.orderCode}, code={webhookData.code}");
             if (order == null || order.Status != OrderStatus.Pending)
             {
                 return;
@@ -117,5 +121,34 @@ namespace TideOfDestiniy.BLL.Services
             await _orderRepo.UpdateAsync(order);
             await _orderRepo.SaveChangesAsync();
         }
+
+        public async Task<bool> ConfirmPayment(long orderCode)
+        {
+            // Gọi PayOS để kiểm tra trạng thái đơn hàng
+            var paymentLinkInfo = await _payOS.getPaymentLinkInformation(orderCode);
+
+            if (paymentLinkInfo.status == "PAID")
+            {
+                var order = await _orderRepo.GetByPaymentOrderCodeAsync((int)(orderCode % int.MaxValue));
+                if (order == null) return false;
+
+                order.Status = OrderStatus.Paid;
+
+                var user = await _userRepo.GetUserByIdAsync(order.UserId);
+                if (user != null)
+                {
+                    user.HasPurchasedGame = true;
+                    await _userRepo.UpdateUserAsync(user);
+                }
+
+                await _orderRepo.UpdateAsync(order);
+                await _orderRepo.SaveChangesAsync();
+
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }
