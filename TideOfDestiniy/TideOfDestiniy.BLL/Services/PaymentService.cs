@@ -19,8 +19,8 @@ namespace TideOfDestiniy.BLL.Services
         private readonly PayOS _payOS;
         private readonly IOrderRepo _orderRepo;
         private readonly IUserRepo _userRepo;
-        private const decimal GamePrice = 250000; // Đặt giá game cố định ở đây (ví dụ: 250,000 VND)
-        private const string GameDescription = "Purchase Tide of Destiny Game";
+        private const decimal GamePrice = 5000; // Đặt giá game cố định ở đây (ví dụ: 250,000 VND)
+        private const string GameDescription = "Tide of Destiny";
 
         public PaymentService(IConfiguration configuration, IOrderRepo orderRepo, IUserRepo userRepo)
         {
