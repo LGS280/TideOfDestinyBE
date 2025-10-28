@@ -74,5 +74,26 @@ namespace TideOfDestiniy.API.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpPost("confirm")]
+        [Authorize]
+        public async Task<IActionResult> ConfirmPayment([FromBody] long orderCode)
+        {
+            try
+            {
+                // ✅ Gọi service xử lý xác nhận thanh toán
+                var result = await _paymentService.ConfirmPayment(orderCode);
+
+                if (!result)
+                    return BadRequest(new { success = false, message = "Payment not completed yet." });
+
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, error = ex.Message });
+            }
+        }
+
     }
 }
