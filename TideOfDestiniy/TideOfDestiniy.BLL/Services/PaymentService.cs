@@ -114,6 +114,8 @@ namespace TideOfDestiniy.BLL.Services
                 order.Status = OrderStatus.Failed;
             }
 
+            Console.WriteLine($"✅ Webhook hit: orderCode={webhookData.orderCode}, code={webhookData.code}");
+
             await _orderRepo.UpdateAsync(order);
             await _orderRepo.SaveChangesAsync();
         }
