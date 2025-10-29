@@ -45,7 +45,8 @@ namespace TideOfDestiniy.BLL.Services
             {
                 Id = Guid.NewGuid(),
                 Name = createProductDto.Name,
-                Price = createProductDto.Price
+                Price = createProductDto.Price,
+                IsActive = createProductDto.IsActive
             };
 
             await _productRepo.AddAsync(product);
@@ -75,6 +76,12 @@ namespace TideOfDestiniy.BLL.Services
             _productRepo.Delete(product);
             await _productRepo.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<ProductResponse>> GetActiveProductsAsync()
+        {
+            var products = await _productRepo.GetActiveProductsAsync();
+            return products.Select(p => new ProductResponse { Id = p.Id, Name = p.Name, Price = p.Price, IsActive = p.IsActive });
         }
     }
 }

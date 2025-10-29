@@ -20,7 +20,7 @@ namespace TideOfDestiniy.DAL.Entities
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Price { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = false;
 
         // Không còn liên kết đến GameBuild nữa
         // Bỏ quan hệ với OrderItem vì một đơn hàng chỉ có 1 item này
