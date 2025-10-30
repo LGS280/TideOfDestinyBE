@@ -12,13 +12,8 @@ using TideOfDestiniy.DAL.Context;
 namespace TideOfDestiniy.DAL.Migrations
 {
     [DbContext(typeof(TideOfDestinyDbContext))]
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
     [Migration("20251028123833_set-null-description-of-product")]
     partial class setnulldescriptionofproduct
-========
-    [Migration("20251027045416_AddPasswordResetToken")]
-    partial class AddPasswordResetToken
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,541 +26,458 @@ namespace TideOfDestiniy.DAL.Migrations
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.GameBuild", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DownloadUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("DownloadUrl")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<int>("FileSizeMB")
-                        .HasColumnType("integer");
+                b.Property<int>("FileSizeMB")
+                    .HasColumnType("integer");
 
-                    b.Property<bool>("IsLatest")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsLatest")
+                    .HasColumnType("boolean");
 
-                    b.Property<string>("Platform")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("Platform")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("timestamp with time zone");
+                b.Property<DateTime>("ReleaseDate")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Version")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                b.Property<string>("Version")
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnType("character varying(20)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("GameBuilds");
-                });
+                b.ToTable("GameBuilds");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.GameFile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("ContentType")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<string>("DownloadUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("DownloadUrl")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("text");
-========
-                        .HasColumnType("int");
+                b.Property<string>("FileName")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                b.Property<long>("Size")
+                    .HasColumnType("bigint");
 
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                b.Property<DateTime>("UploadedAt")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DownloadUrl")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                b.HasKey("Id");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
+                b.ToTable("GameFiles");
+            });
 
-                    b.Property<long>("Size")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("UploadedAt")
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
-                        .HasColumnType("timestamp with time zone");
-========
-                        .HasColumnType("datetime(6)");
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GameFiles");
-                });
-
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Image", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("AltText")
-                        .HasColumnType("text");
+                b.Property<string>("AltText")
+                    .HasColumnType("text");
 
-                    b.Property<Guid>("NewsId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("NewsId")
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("PublicId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("PublicId")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("timestamp with time zone");
+                b.Property<DateTime>("UploadedAt")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("Url")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("NewsId");
+                b.HasIndex("NewsId");
 
-                    b.ToTable("Images");
-                });
+                b.ToTable("Images");
+            });
 
-========
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("AuthorId")
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("Content")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text");
+                b.Property<string>("ImageUrl")
+                    .HasColumnType("text");
 
-                    b.Property<int>("NewsCategory")
-                        .HasColumnType("integer");
+                b.Property<int>("NewsCategory")
+                    .HasColumnType("integer");
 
-                    b.Property<DateTime>("PublishedAt")
-                        .HasColumnType("timestamp with time zone");
+                b.Property<DateTime>("PublishedAt")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                b.Property<string>("Title")
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasColumnType("character varying(255)");
 
-                    b.Property<string>("Version")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                b.Property<string>("Version")
+                    .HasMaxLength(20)
+                    .HasColumnType("character varying(20)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
+                b.HasIndex("AuthorId");
 
-                    b.ToTable("News");
+                b.ToTable("News");
 
-                    b.HasData(
-                        new
-                        {
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
-                            Id = new Guid("8ec05a34-af0f-4c56-9fe0-557737784917"),
-                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            Content = "Nhiều tính năng mới và sửa lỗi...",
-                            NewsCategory = 0,
-                            PublishedAt = new DateTime(2025, 10, 28, 12, 38, 33, 382, DateTimeKind.Utc).AddTicks(709),
-========
-                            Id = new Guid("6ca292da-2256-45d2-980b-1af7075259a0"),
-                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            Content = "Nhiều tính năng mới và sửa lỗi...",
-                            NewsCategory = 0,
-                            PublishedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2760),
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
-                            Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
-                            Version = "2.5.0"
-                        },
-                        new
-                        {
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
-                            Id = new Guid("16793a02-9f01-47d7-882c-768ed3a4b3b0"),
-                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
-                            NewsCategory = 1,
-                            PublishedAt = new DateTime(2025, 10, 28, 12, 38, 33, 382, DateTimeKind.Utc).AddTicks(712),
-========
-                            Id = new Guid("553482e1-4c8b-4b18-82e6-4f3b82223a26"),
-                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
-                            NewsCategory = 1,
-                            PublishedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2763),
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
-                            Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        Id = new Guid("8ec05a34-af0f-4c56-9fe0-557737784917"),
+                        AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                        Content = "Nhiều tính năng mới và sửa lỗi...",
+                        NewsCategory = 0,
+                        PublishedAt = new DateTime(2025, 10, 28, 12, 38, 33, 382, DateTimeKind.Utc).AddTicks(709),
+                        Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
+                        Version = "2.5.0"
+                    },
+                    new
+                    {
+                        Id = new Guid("16793a02-9f01-47d7-882c-768ed3a4b3b0"),
+                        AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                        Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
+                        NewsCategory = 1,
+                        PublishedAt = new DateTime(2025, 10, 28, 12, 38, 33, 382, DateTimeKind.Utc).AddTicks(712),
+                        Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
+                    });
+            });
 
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Order", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18, 2)");
+                b.Property<decimal>("Amount")
+                    .HasColumnType("decimal(18, 2)");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                b.Property<string>("Description")
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnType("character varying(200)");
 
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("timestamp with time zone");
+                b.Property<DateTime>("OrderDate")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("PaymentLinkId")
-                        .HasColumnType("text");
+                b.Property<string>("PaymentLinkId")
+                    .HasColumnType("text");
 
-                    b.Property<int>("PaymentOrderCode")
-                        .HasColumnType("integer");
+                b.Property<int>("PaymentOrderCode")
+                    .HasColumnType("integer");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                b.Property<int>("Status")
+                    .HasColumnType("integer");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                b.Property<Guid>("UserId")
+                    .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
-                });
+                b.ToTable("Orders");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Product", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                b.Property<string>("Description")
+                    .HasMaxLength(1000)
+                    .HasColumnType("character varying(1000)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                b.Property<bool>("IsActive")
+                    .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasColumnType("character varying(200)");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18, 2)");
+                b.Property<decimal>("Price")
+                    .HasColumnType("decimal(18, 2)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Products");
-========
-            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.PasswordResetToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PasswordResetTokens");
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
-                });
+                b.ToTable("Products");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                b.Property<string>("RoleName")
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnType("character varying(50)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("RoleName")
-                        .IsUnique();
+                b.HasIndex("RoleName")
+                    .IsUnique();
 
-                    b.ToTable("Roles");
+                b.ToTable("Roles");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            RoleName = "Admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            RoleName = "Player"
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        Id = 1,
+                        RoleName = "Admin"
+                    },
+                    new
+                    {
+                        Id = 2,
+                        RoleName = "Player"
+                    });
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.SystemRequirement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DirectXVersion")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                b.Property<string>("DirectXVersion")
+                    .HasMaxLength(50)
+                    .HasColumnType("character varying(50)");
 
-                    b.Property<string>("Graphics")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
+                b.Property<string>("Graphics")
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .HasColumnType("character varying(150)");
 
-                    b.Property<string>("Memory")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                b.Property<string>("Memory")
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnType("character varying(50)");
 
-                    b.Property<string>("OS")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                b.Property<string>("OS")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("character varying(100)");
 
-                    b.Property<string>("Processor")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
+                b.Property<string>("Processor")
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .HasColumnType("character varying(150)");
 
-                    b.Property<string>("Storage")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                b.Property<string>("Storage")
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnType("character varying(50)");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("Type")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("SystemRequirements");
-                });
+                b.ToTable("SystemRequirements");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                b.Property<string>("Email")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("character varying(100)");
 
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
+                b.Property<bool>("EmailConfirmed")
+                    .HasColumnType("boolean");
 
-                    b.Property<bool>("HasPurchasedGame")
-                        .HasColumnType("boolean");
+                b.Property<bool>("HasPurchasedGame")
+                    .HasColumnType("boolean");
 
-                    b.Property<DateTime?>("LastLoginAt")
-                        .HasColumnType("timestamp with time zone");
+                b.Property<DateTime?>("LastLoginAt")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("PasswordHash")
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
-                        .HasColumnType("text");
-========
-                        .HasColumnType("longtext");
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
+                b.Property<string>("PasswordHash")
+                    .HasColumnType("text");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                b.Property<string>("Username")
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnType("character varying(50)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
+                b.HasIndex("Email")
+                    .IsUnique();
 
-                    b.HasIndex("Username")
-                        .IsUnique();
+                b.HasIndex("Username")
+                    .IsUnique();
 
-                    b.ToTable("Users");
+                b.ToTable("Users");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
-                            CreatedAt = new DateTime(2025, 10, 28, 12, 38, 33, 382, DateTimeKind.Utc).AddTicks(630),
-========
-                            CreatedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2663),
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
-                            Email = "admin@tideofdestiny.com",
-                            EmailConfirmed = true,
-                            HasPurchasedGame = false,
-                            PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
-                            Username = "admin"
-                        },
-                        new
-                        {
-                            Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-<<<<<<<< HEAD:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251028123833_set-null-description-of-product.Designer.cs
-                            CreatedAt = new DateTime(2025, 10, 28, 12, 38, 33, 382, DateTimeKind.Utc).AddTicks(641),
-========
-                            CreatedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2681),
->>>>>>>> GithubReleaseUpload:TideOfDestiniy/TideOfDestiniy.DAL/Migrations/20251027045416_AddPasswordResetToken.Designer.cs
-                            Email = "player@gmail.com",
-                            EmailConfirmed = true,
-                            HasPurchasedGame = false,
-                            PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
-                            Username = "player1"
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
+                        CreatedAt = new DateTime(2025, 10, 28, 12, 38, 33, 382, DateTimeKind.Utc).AddTicks(630),
+                        Email = "admin@tideofdestiny.com",
+                        EmailConfirmed = true,
+                        HasPurchasedGame = false,
+                        PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
+                        Username = "admin"
+                    },
+                    new
+                    {
+                        Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                        CreatedAt = new DateTime(2025, 10, 28, 12, 38, 33, 382, DateTimeKind.Utc).AddTicks(641),
+                        Email = "player@gmail.com",
+                        EmailConfirmed = true,
+                        HasPurchasedGame = false,
+                        PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
+                        Username = "player1"
+                    });
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.UserRole", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+            {
+                b.Property<Guid>("UserId")
+                    .HasColumnType("uuid");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer");
+                b.Property<int>("RoleId")
+                    .HasColumnType("integer");
 
-                    b.HasKey("UserId", "RoleId");
+                b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("RoleId");
+                b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles");
+                b.ToTable("UserRoles");
 
-                    b.HasData(
-                        new
-                        {
-                            UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
-                            RoleId = 1
-                        },
-                        new
-                        {
-                            UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            RoleId = 2
-                        });
-                });
+                b.HasData(
+                    new
+                    {
+                        UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
+                        RoleId = 1
+                    },
+                    new
+                    {
+                        UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                        RoleId = 2
+                    });
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Image", b =>
-                {
-                    b.HasOne("TideOfDestiniy.DAL.Entities.News", "News")
-                        .WithMany("Images")
-                        .HasForeignKey("NewsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("TideOfDestiniy.DAL.Entities.News", "News")
+                    .WithMany("Images")
+                    .HasForeignKey("NewsId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("News");
-                });
+                b.Navigation("News");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
-                {
-                    b.HasOne("TideOfDestiniy.DAL.Entities.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("TideOfDestiniy.DAL.Entities.User", "Author")
+                    .WithMany()
+                    .HasForeignKey("AuthorId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Author");
-                });
+                b.Navigation("Author");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Order", b =>
-                {
-                    b.HasOne("TideOfDestiniy.DAL.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("TideOfDestiniy.DAL.Entities.User", "User")
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("User");
-                });
+                b.Navigation("User");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.UserRole", b =>
-                {
-                    b.HasOne("TideOfDestiniy.DAL.Entities.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            {
+                b.HasOne("TideOfDestiniy.DAL.Entities.Role", "Role")
+                    .WithMany("UserRoles")
+                    .HasForeignKey("RoleId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.HasOne("TideOfDestiniy.DAL.Entities.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                b.HasOne("TideOfDestiniy.DAL.Entities.User", "User")
+                    .WithMany("UserRoles")
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Role");
+                b.Navigation("Role");
 
-                    b.Navigation("User");
-                });
+                b.Navigation("User");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
-                {
-                    b.Navigation("Images");
-                });
+            {
+                b.Navigation("Images");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Role", b =>
-                {
-                    b.Navigation("UserRoles");
-                });
+            {
+                b.Navigation("UserRoles");
+            });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.User", b =>
-                {
-                    b.Navigation("UserRoles");
-                });
+            {
+                b.Navigation("UserRoles");
+            });
 #pragma warning restore 612, 618
         }
     }
