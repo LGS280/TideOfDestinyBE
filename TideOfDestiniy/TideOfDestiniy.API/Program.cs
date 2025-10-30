@@ -72,6 +72,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IPhotoService, PhotoService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 
 
             //Add Repositories
@@ -81,7 +82,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IFileRepo, FileRepo>();
             builder.Services.AddScoped<IOrderRepo, OrderRepo>();
             builder.Services.AddScoped<IProductRepo, ProductRepo>();
-            builder.Services.AddScoped<IProductRepo, ProductRepo>();
+            builder.Services.AddScoped<IPasswordResetTokenRepo, PasswordResetTokenRepo>();
 
             builder.Services.AddHttpClient();
 
@@ -221,7 +222,7 @@ namespace TideOfDestiniy.API
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();

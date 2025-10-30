@@ -83,7 +83,7 @@ namespace TideOfDestiniy.BLL.Services
             return response.ResponseStream;
         }
 
-        public async Task<(byte[] FileBytes, string FileName)> DownloadLatestFileAsync()
+        public async Task<(byte[] FileBytes, string FileName, string ContentType)> DownloadLatestFileAsync()
         {
             var listRequest = new ListObjectsV2Request
             {
@@ -108,7 +108,10 @@ namespace TideOfDestiniy.BLL.Services
             using (var memoryStream = new MemoryStream())
             {
                 await getResponse.ResponseStream.CopyToAsync(memoryStream);
-                return (memoryStream.ToArray(), latestFile.Key);
+                return (memoryStream.ToArray(),
+                        Path.GetFileName(latestFile.Key),
+                        getResponse.Headers.ContentType ?? "application/octet-stream"
+                        );
             }
         }
     }
