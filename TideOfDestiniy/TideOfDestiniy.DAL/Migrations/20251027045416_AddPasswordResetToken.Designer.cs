@@ -7,14 +7,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TideOfDestiniy.DAL.Context;
 
-
 #nullable disable
 
 namespace TideOfDestiniy.DAL.Migrations
 {
     [DbContext(typeof(TideOfDestinyDbContext))]
-    [Migration("20250924123559_add-enum-category")]
-    partial class addenumcategory
+    [Migration("20251027045416_AddPasswordResetToken")]
+    partial class AddPasswordResetToken
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,6 +60,37 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.ToTable("GameBuilds");
                 });
 
+            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.GameFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DownloadUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GameFiles");
+                });
+
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
                 {
                     b.Property<Guid>("Id")
@@ -101,23 +131,52 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f5d1a2b7-3fd0-423c-9151-06db4291c583"),
+                            Id = new Guid("6ca292da-2256-45d2-980b-1af7075259a0"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Nhiều tính năng mới và sửa lỗi...",
                             NewsCategory = 0,
-                            PublishedAt = new DateTime(2025, 9, 24, 12, 35, 59, 690, DateTimeKind.Utc).AddTicks(2472),
+                            PublishedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2760),
                             Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
                             Version = "2.5.0"
                         },
                         new
                         {
-                            Id = new Guid("9dbdbeff-8a1a-4209-84dd-04024fbc91bb"),
+                            Id = new Guid("553482e1-4c8b-4b18-82e6-4f3b82223a26"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
                             NewsCategory = 1,
-                            PublishedAt = new DateTime(2025, 9, 24, 12, 35, 59, 690, DateTimeKind.Utc).AddTicks(2475),
+                            PublishedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2763),
                             Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
                         });
+                });
+
+            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.PasswordResetToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Role", b =>
@@ -220,7 +279,6 @@ namespace TideOfDestiniy.DAL.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Username")
@@ -242,7 +300,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
-                            CreatedAt = new DateTime(2025, 9, 24, 12, 35, 59, 690, DateTimeKind.Utc).AddTicks(2393),
+                            CreatedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2663),
                             Email = "admin@tideofdestiny.com",
                             EmailConfirmed = true,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
@@ -251,7 +309,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            CreatedAt = new DateTime(2025, 9, 24, 12, 35, 59, 690, DateTimeKind.Utc).AddTicks(2405),
+                            CreatedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2681),
                             Email = "player@gmail.com",
                             EmailConfirmed = true,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",

@@ -128,23 +128,52 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7cf5e7bc-ac7b-46c9-8aae-94801d653d21"),
+                            Id = new Guid("6ca292da-2256-45d2-980b-1af7075259a0"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Nhiều tính năng mới và sửa lỗi...",
                             NewsCategory = 0,
-                            PublishedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(6043),
+                            PublishedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2760),
                             Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
                             Version = "2.5.0"
                         },
                         new
                         {
-                            Id = new Guid("2100788f-4caf-4cf8-a76d-6a7105502304"),
+                            Id = new Guid("553482e1-4c8b-4b18-82e6-4f3b82223a26"),
                             AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
                             Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
                             NewsCategory = 1,
-                            PublishedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(6046),
+                            PublishedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2763),
                             Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
                         });
+                });
+
+            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.PasswordResetToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Role", b =>
@@ -268,7 +297,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
-                            CreatedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(5961),
+                            CreatedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2663),
                             Email = "admin@tideofdestiny.com",
                             EmailConfirmed = true,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
@@ -277,7 +306,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         new
                         {
                             Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
-                            CreatedAt = new DateTime(2025, 9, 27, 16, 5, 31, 868, DateTimeKind.Utc).AddTicks(5983),
+                            CreatedAt = new DateTime(2025, 10, 27, 4, 54, 15, 476, DateTimeKind.Utc).AddTicks(2681),
                             Email = "player@gmail.com",
                             EmailConfirmed = true,
                             PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",

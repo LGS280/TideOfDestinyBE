@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
+using System.Net.Mime;
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.DAL.Interfaces;
 
@@ -90,8 +91,8 @@ namespace TideOfDestiniy.API.Controllers
         {
             try
             {
-                var (fileBytes, fileName) = await _storageService.DownloadLatestFileAsync();
-                return File(fileBytes, "application/x-zip-compressed", fileName);
+                var (fileBytes, fileName, contentType) = await _storageService.DownloadLatestFileAsync();
+                return File(fileBytes, contentType ?? "application/octet-stream", fileName);
             }
             catch (AmazonS3Exception ex)
             {

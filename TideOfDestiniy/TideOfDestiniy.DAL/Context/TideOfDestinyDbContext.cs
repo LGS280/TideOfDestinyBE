@@ -20,6 +20,7 @@ namespace TideOfDestiniy.DAL.Context
         public DbSet<SystemRequirement> SystemRequirements { get; set; }
         public DbSet<GameBuild> GameBuilds { get; set; }
         public DbSet<GameFile> GameFiles { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

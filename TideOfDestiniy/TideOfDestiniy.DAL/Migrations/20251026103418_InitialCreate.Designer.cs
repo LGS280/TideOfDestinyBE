@@ -7,14 +7,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TideOfDestiniy.DAL.Context;
 
-
 #nullable disable
 
 namespace TideOfDestiniy.DAL.Migrations
 {
     [DbContext(typeof(TideOfDestinyDbContext))]
-    [Migration("20250917141750_add-email-confirm")]
-    partial class addemailconfirm
+    [Migration("20251026103418_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,6 +60,37 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.ToTable("GameBuilds");
                 });
 
+            modelBuilder.Entity("TideOfDestiniy.DAL.Entities.GameFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DownloadUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GameFiles");
+                });
+
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>
                 {
                     b.Property<Guid>("Id")
@@ -76,6 +106,9 @@ namespace TideOfDestiniy.DAL.Migrations
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("NewsCategory")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("datetime(6)");
@@ -94,6 +127,27 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("News");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("d5b45c29-6a51-49f0-b03d-92ca793a516c"),
+                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            Content = "Nhiều tính năng mới và sửa lỗi...",
+                            NewsCategory = 0,
+                            PublishedAt = new DateTime(2025, 10, 26, 10, 34, 17, 166, DateTimeKind.Utc).AddTicks(2239),
+                            Title = "Bản cập nhật lớn 2.5 đã ra mắt!",
+                            Version = "2.5.0"
+                        },
+                        new
+                        {
+                            Id = new Guid("ec1c2d17-cd4b-4928-a70a-5d59683183ca"),
+                            AuthorId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            Content = "Tham gia ngay để nhận phần thưởng hấp dẫn...",
+                            NewsCategory = 1,
+                            PublishedAt = new DateTime(2025, 10, 26, 10, 34, 17, 166, DateTimeKind.Utc).AddTicks(2244),
+                            Title = "Sự kiện Mùa Hè Rực Lửa bắt đầu!"
+                        });
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.Role", b =>
@@ -196,7 +250,6 @@ namespace TideOfDestiniy.DAL.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Username")
@@ -213,6 +266,26 @@ namespace TideOfDestiniy.DAL.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
+                            CreatedAt = new DateTime(2025, 10, 26, 10, 34, 17, 166, DateTimeKind.Utc).AddTicks(2091),
+                            Email = "admin@tideofdestiny.com",
+                            EmailConfirmed = true,
+                            PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
+                            Username = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            CreatedAt = new DateTime(2025, 10, 26, 10, 34, 17, 166, DateTimeKind.Utc).AddTicks(2116),
+                            Email = "player@gmail.com",
+                            EmailConfirmed = true,
+                            PasswordHash = "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW",
+                            Username = "player1"
+                        });
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.UserRole", b =>
@@ -228,6 +301,18 @@ namespace TideOfDestiniy.DAL.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("UserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"),
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"),
+                            RoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("TideOfDestiniy.DAL.Entities.News", b =>

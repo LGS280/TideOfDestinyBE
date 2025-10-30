@@ -71,5 +71,6 @@ namespace TideOfDestiniy.API.Controllers
             }
             return Ok(new { message = "Google login successful.", token = result.Token });
         }
+
     }
 }

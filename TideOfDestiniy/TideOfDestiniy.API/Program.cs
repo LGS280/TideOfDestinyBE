@@ -69,6 +69,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IDownloadGameService, DownloadGameService>();
             builder.Services.AddScoped<IR2StorageService, R2StorageService>();
             builder.Services.AddScoped<IPhotoService, PhotoService>();
+            builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
 
 
             //Add Repositories
@@ -76,6 +77,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<INewsRepo, NewsRepo>();
             builder.Services.AddScoped<ISystemRequirementRepo, SystemRequirementRepo>();
             builder.Services.AddScoped<IFileRepo, FileRepo>();
+            builder.Services.AddScoped<IPasswordResetTokenRepo, PasswordResetTokenRepo>();
 
             builder.Services.AddHttpClient();
 

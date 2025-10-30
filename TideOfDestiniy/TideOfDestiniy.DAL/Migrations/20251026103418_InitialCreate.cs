@@ -111,10 +111,11 @@ namespace TideOfDestiniy.DAL.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PasswordHash = table.Column<string>(type: "longtext", nullable: false)
+                    PasswordHash = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    LastLoginAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    LastLoginAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -135,6 +136,7 @@ namespace TideOfDestiniy.DAL.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Version = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    NewsCategory = table.Column<int>(type: "int", nullable: false),
                     PublishedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     AuthorId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
@@ -182,6 +184,33 @@ namespace TideOfDestiniy.DAL.Migrations
                 {
                     { 1, "Admin" },
                     { 2, "Player" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "Email", "EmailConfirmed", "LastLoginAt", "PasswordHash", "Username" },
+                values: new object[,]
+                {
+                    { new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"), new DateTime(2025, 10, 26, 10, 34, 17, 166, DateTimeKind.Utc).AddTicks(2116), "player@gmail.com", true, null, "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW", "player1" },
+                    { new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f"), new DateTime(2025, 10, 26, 10, 34, 17, 166, DateTimeKind.Utc).AddTicks(2091), "admin@tideofdestiny.com", true, null, "$2a$11$Qm/C/LMke5VZ91Ezxk73I.5dsbIqlWHrzzkG8h9f2yUZjPwIwD6ZW", "admin" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "News",
+                columns: new[] { "Id", "AuthorId", "Content", "ImageUrl", "NewsCategory", "PublishedAt", "Title", "Version" },
+                values: new object[,]
+                {
+                    { new Guid("d5b45c29-6a51-49f0-b03d-92ca793a516c"), new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"), "Nhiều tính năng mới và sửa lỗi...", null, 0, new DateTime(2025, 10, 26, 10, 34, 17, 166, DateTimeKind.Utc).AddTicks(2239), "Bản cập nhật lớn 2.5 đã ra mắt!", "2.5.0" },
+                    { new Guid("ec1c2d17-cd4b-4928-a70a-5d59683183ca"), new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a"), "Tham gia ngay để nhận phần thưởng hấp dẫn...", null, 1, new DateTime(2025, 10, 26, 10, 34, 17, 166, DateTimeKind.Utc).AddTicks(2244), "Sự kiện Mùa Hè Rực Lửa bắt đầu!", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { 2, new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5a") },
+                    { 1, new Guid("c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f") }
                 });
 
             migrationBuilder.CreateIndex(
