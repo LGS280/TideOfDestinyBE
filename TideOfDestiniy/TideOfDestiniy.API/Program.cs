@@ -93,31 +93,40 @@ namespace TideOfDestiniy.API
 
 
             // ====> THÊM DỊCH VỤ CORS VÀO CONTAINER <====
+            // === CORS FIXED ===
+      
+            var allowedOrigins = builder.Configuration.GetValue<string>("CorsOrigins")
+                                 ?.Split(",", StringSplitOptions.RemoveEmptyEntries);
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy(name: MyAllowSpecificOrigins,
-                                  policy =>
-                                  {
-                                      var origins = builder.Configuration.GetValue<string>("CorsOrigins");
-                                      if (!string.IsNullOrEmpty(origins))
-                                      {
-                                          policy.WithOrigins(origins.Split(',')) // Tách chuỗi thành mảng các origin
-                                                .AllowAnyHeader()
-                                                .AllowAnyMethod()
-                                                .AllowCredentials() // Allow credentials for file downloads
-                                                .SetIsOriginAllowedToAllowWildcardSubdomains(); // Allow subdomains
-                                      }
-                                      else
-                                      {
-                                          // Fallback for development - allow all origins (cannot use AllowCredentials with AllowAnyOrigin)
-                                          policy.AllowAnyOrigin()
-                                                .AllowAnyHeader()
-                                                .AllowAnyMethod();
-                                      }
-                                  });
-                
-                // Add a separate policy for Swagger UI same-origin requests
-                options.AddPolicy("AllowAll",
+                options.AddPolicy(MyAllowSpecificOrigins, policy =>
+                {
+                    policy
+                        .WithOrigins(
+                            "https://tide-of-destiny-client.vercel.app",
+                            "http://localhost:3000"
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+
+                // Swagger UI - không dùng cho FE
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            
+
+
+
+
+
+
+            // Add a separate policy for Swagger UI same-origin requests
+            options.AddPolicy("AllowAll",
                                   policy =>
                                   {
                                       policy.AllowAnyOrigin()
@@ -223,6 +232,8 @@ namespace TideOfDestiniy.API
             }
 
             //app.UseHttpsRedirection();
+
+            app.UseRouting();
 
             app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
