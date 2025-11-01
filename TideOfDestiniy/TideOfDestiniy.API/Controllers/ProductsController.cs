@@ -32,6 +32,13 @@ namespace TideOfDestiniy.API.Controllers
             }
         }
 
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveProducts()
+        {
+            var products = await _productService.GetActiveProductsAsync();
+            return Ok(products);
+        }
+
         // === Các endpoints dưới đây dành cho trang quản trị (Admin) ===
 
         [HttpGet]

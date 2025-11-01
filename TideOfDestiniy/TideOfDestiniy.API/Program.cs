@@ -73,6 +73,7 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
 
             //Add Repositories

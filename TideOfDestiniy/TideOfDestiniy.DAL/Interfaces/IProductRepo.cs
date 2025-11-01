@@ -10,6 +10,7 @@ namespace TideOfDestiniy.DAL.Interfaces
     public interface IProductRepo
     {
         Task<Product> GetMainGameProductAsync();
+        Task<IEnumerable<Product>> GetActiveProductsAsync();
         Task<IEnumerable<Product>> GetAllAsync();
         Task<Product?> GetByIdAsync(Guid id);
         Task AddAsync(Product product);

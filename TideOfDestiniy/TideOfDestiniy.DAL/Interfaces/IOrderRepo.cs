@@ -10,6 +10,7 @@ namespace TideOfDestiniy.DAL.Interfaces
 {
     public interface IOrderRepo
     {
+        Task<IEnumerable<Order>> GetByUserIdAsync(Guid userId);
         Task AddAsync(Order order);
         Task UpdateAsync(Order order);
         Task<Order?> GetByPaymentOrderCodeAsync(int orderCode);

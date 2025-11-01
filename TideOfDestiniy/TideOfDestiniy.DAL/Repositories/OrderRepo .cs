@@ -40,5 +40,13 @@ namespace TideOfDestiniy.DAL.Repositories
         {
             return await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Order>> GetByUserIdAsync(Guid userId)
+        {
+            return await _context.Orders
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
     }
 }
