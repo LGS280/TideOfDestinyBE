@@ -29,4 +29,11 @@ RUN dotnet publish "./TideOfDestiniy.API.csproj" -c $BUILD_CONFIGURATION -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# BẮT BUỘC: Lắng nghe port Render cấp
+ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT}
+
+EXPOSE 10000
+
 ENTRYPOINT ["dotnet", "TideOfDestiniy.API.dll"]
+
