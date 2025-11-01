@@ -31,6 +31,13 @@ namespace TideOfDestiniy.BLL.Services
 
         public async Task<string> UploadFileAsync(Stream fileStream, string fileName, string contentType)
         {
+            // Check file extension
+            var extension = Path.GetExtension(fileName)?.ToLowerInvariant();
+            if (extension != ".zip" && extension != ".rar")
+            {
+                throw new InvalidOperationException("You can only upload .zip or .rar file");
+            }
+
             var request = new PutObjectRequest
             {
                 BucketName = _bucketName,
@@ -41,9 +48,10 @@ namespace TideOfDestiniy.BLL.Services
 
             await _s3Client.PutObjectAsync(request);
 
-            // Trả về public URL
+            // Return public URL
             return $"https://{_bucketName}.r2.cloudflarestorage.com/{fileName}";
         }
+
         public string GeneratePreSignedUrl(string bucket, string key, TimeSpan expiry)
         {
             var request = new GetPreSignedUrlRequest
