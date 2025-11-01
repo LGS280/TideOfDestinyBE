@@ -472,7 +472,8 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
-/ClaimRequest.Business/obj
-/ClaimRequest.Application/obj
-/ClaimRequest.DataAccess/Migrations
-/ClaimRequest.Presentation/appsettings.json
+/ClaimRequest.BLL/obj
+/TideOfDestiny.DAL/obj
+/TideOfDestiny.DAL/Migrations
+/TideOfDestiny.API/appsettings.json
+/TideOfDestiny.API/appsettings.Development.json
