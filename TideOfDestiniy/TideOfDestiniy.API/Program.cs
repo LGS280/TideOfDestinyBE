@@ -94,31 +94,24 @@ namespace TideOfDestiniy.API
 
             // ====> THÊM DỊCH VỤ CORS VÀO CONTAINER <====
             // === CORS FIXED ===
-      
-            var allowedOrigins = builder.Configuration.GetValue<string>("CorsOrigins")
-                                 ?.Split(",", StringSplitOptions.RemoveEmptyEntries);
+
+            var allowedOrigins = new[]
+{
+    "https://tide-of-destiny-client.vercel.app",
+    "http://localhost:5173"
+};
+
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy(MyAllowSpecificOrigins, policy =>
+                options.AddPolicy("AllowSpecificOrigins", policy =>
                 {
-                    policy
-                        .WithOrigins(
-                            "https://tide-of-destiny-client.vercel.app",
-                            "http://localhost:3000"
-                        )
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
-                });
-
-                // Swagger UI - không dùng cho FE
-                options.AddPolicy("AllowAll", policy =>
-                {
-                    policy.AllowAnyOrigin()
+                    policy.WithOrigins(allowedOrigins)
                           .AllowAnyHeader()
-                          .AllowAnyMethod();
+                          .AllowAnyMethod()
+                          .AllowCredentials();
                 });
             
+
 
 
 
