@@ -21,9 +21,10 @@ namespace TideOfDestiniy.BLL.Services
         {
             // Đọc cấu hình từ appsettings.json và tạo tài khoản Cloudinary
             var account = new Account(
-                config["CloudinarySettings:CloudName"],
-                config["CloudinarySettings:ApiKey"],
-                config["CloudinarySettings:ApiSecret"]
+            config["CloudinarySettings__CloudName"],
+            config["CloudinarySettings__ApiKey"],
+            config["CloudinarySettings__ApiSecret"]
+
             );
             _cloudinary = new Cloudinary(account);
         }
