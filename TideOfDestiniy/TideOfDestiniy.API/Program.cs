@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Text;
 using TideOfDestiniy.BLL.Hubs;
 using TideOfDestiniy.BLL.Interfaces;
@@ -101,9 +102,24 @@ namespace TideOfDestiniy.API
                                   policy =>
                                   {
                                       var origins = builder.Configuration.GetValue<string>("CorsOrigins");
+                                      var allowedOrigins = new List<string>();
+                                      
+                                      // Add origins from configuration
                                       if (!string.IsNullOrEmpty(origins))
                                       {
-                                          policy.WithOrigins(origins.Split(',')) // Tách chuỗi thành mảng các origin
+                                          allowedOrigins.AddRange(origins.Split(',').Select(o => o.Trim()).Where(o => !string.IsNullOrEmpty(o)));
+                                      }
+                                      
+                                      // Always include the production domain
+                                      var productionDomain = "https://tide-of-destiny-client.vercel.app";
+                                      if (!allowedOrigins.Contains(productionDomain))
+                                      {
+                                          allowedOrigins.Add(productionDomain);
+                                      }
+                                      
+                                      if (allowedOrigins.Any())
+                                      {
+                                          policy.WithOrigins(allowedOrigins.ToArray()) // Tách chuỗi thành mảng các origin
                                                 .AllowAnyHeader()
                                                 .AllowAnyMethod()
                                                 .AllowCredentials() // Allow credentials for file downloads
