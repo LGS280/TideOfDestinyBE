@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
@@ -102,45 +103,43 @@ namespace TideOfDestiniy.API
                                   policy =>
                                   {
                                       var origins = builder.Configuration.GetValue<string>("CorsOrigins");
-                                      var allowedOrigins = new List<string>();
+                                      var allowedOrigins = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                                       
-                                      // Always include the production domain first
+                                      // Always include the production domain - this is critical
                                       var productionDomain = "https://tide-of-destiny-client.vercel.app";
                                       allowedOrigins.Add(productionDomain);
                                       
                                       // Add origins from configuration (avoid duplicates)
                                       if (!string.IsNullOrEmpty(origins))
                                       {
-                                          var configOrigins = origins.Split(',')
+                                          var configOrigins = origins.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                               .Select(o => o.Trim())
-                                              .Where(o => !string.IsNullOrEmpty(o) && !allowedOrigins.Contains(o));
-                                          allowedOrigins.AddRange(configOrigins);
+                                              .Where(o => !string.IsNullOrEmpty(o));
+                                          foreach (var origin in configOrigins)
+                                          {
+                                              allowedOrigins.Add(origin);
+                                          }
                                       }
                                       
-                                      // Use SetIsOriginAllowed for flexible matching (handles trailing slashes, case-insensitive, etc.)
-                                      // This allows more robust origin matching while still supporting credentials
-                                      policy.SetIsOriginAllowed(origin =>
+                                      // Convert to array for WithOrigins (most reliable method with AllowCredentials)
+                                      var originsArray = allowedOrigins.ToArray();
+                                      
+                                      if (originsArray.Length > 0)
                                       {
-                                          if (string.IsNullOrWhiteSpace(origin))
-                                              return false;
-                                              
-                                          // Normalize origin (remove trailing slash, convert to lowercase for comparison)
-                                          var normalizedOrigin = origin.Trim().TrimEnd('/').ToLowerInvariant();
-                                          
-                                          // Check against all allowed origins (normalized)
-                                          foreach (var allowed in allowedOrigins)
-                                          {
-                                              var normalizedAllowed = allowed.Trim().TrimEnd('/').ToLowerInvariant();
-                                              if (normalizedOrigin == normalizedAllowed)
-                                                  return true;
-                                          }
-                                          
-                                          return false;
-                                      })
-                                      .AllowAnyHeader()
-                                      .AllowAnyMethod()
-                                      .AllowCredentials()
-                                      .SetPreflightMaxAge(TimeSpan.FromHours(1)); // Cache preflight for 1 hour
+                                          // Use WithOrigins directly - most reliable with AllowCredentials
+                                          policy.WithOrigins(originsArray)
+                                                .AllowAnyHeader()
+                                                .AllowAnyMethod()
+                                                .AllowCredentials() // Required for cookies/auth
+                                                .SetPreflightMaxAge(TimeSpan.FromHours(1));
+                                      }
+                                      else
+                                      {
+                                          // Fallback - should not happen but safety net
+                                          policy.AllowAnyOrigin()
+                                                .AllowAnyHeader()
+                                                .AllowAnyMethod();
+                                      }
                                   });
                 
                 // Add a separate policy for Swagger UI same-origin requests
