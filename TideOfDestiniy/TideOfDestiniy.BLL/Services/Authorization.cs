@@ -29,51 +29,46 @@ namespace TideOfDestiniy.BLL.Services
             _configuration = configuration;
             _userRepo = userRepo;
         }
-        public string CreateAccessToken(User user)
+       public string CreateAccessToken(User user)
+{
+    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
+    var creds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256Signature);
+
+    var now = DateTime.UtcNow;
+    var expires = now.AddHours(Convert.ToDouble(_configuration["JwtSettings:AccessTokenExpirationHours"]));
+
+    var claims = new List<Claim>
+    {
+        new Claim(JwtRegisteredClaimNames.Name, user.Username),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+    };
+
+    if (user.UserRoles != null)
+    {
+        foreach (var userRole in user.UserRoles)
         {
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
-
-            // Tạo danh sách các "claims" (thông tin định danh) cho người dùng
-            var claims = new List<Claim>
-            {
-                //new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Subject = User ID
-                new Claim(JwtRegisteredClaimNames.Name, user.Username), // Name = Username
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // JWT ID, unique cho mỗi token
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) //     
-            };
-
-            // Thêm các role của người dùng vào claims
-            // Quan trọng: Đảm bảo user object đã được load kèm UserRoles.Role
-            if (user.UserRoles != null)
-            {
-                foreach (var userRole in user.UserRoles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, userRole.Role.RoleName));
-                }
-            }
-
-            // Tạo signing credentials
-            var creds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256Signature);
-
-            // Lấy thời gian hết hạn từ config
-            var tokenExpiration = DateTime.UtcNow.AddHours(Convert.ToDouble(_configuration["JwtSettings:AccessTokenExpirationHours"]));
-
-            // Tạo token descriptor (bản thiết kế cho token)
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = tokenExpiration,
-                SigningCredentials = creds,
-                Issuer = _configuration["JwtSettings:Issuer"],
-                Audience = _configuration["JwtSettings:Audience"]
-            };
-
-            // Tạo và ghi token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
+            claims.Add(new Claim(ClaimTypes.Role, userRole.Role.RoleName));
         }
+    }
+
+    var tokenDescriptor = new SecurityTokenDescriptor
+    {
+        Subject = new ClaimsIdentity(claims),
+        IssuedAt = now,
+        NotBefore = now,
+        Expires = expires,
+        SigningCredentials = creds,
+        Issuer = _configuration["JwtSettings:Issuer"],
+        Audience = _configuration["JwtSettings:Audience"]
+    };
+
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var token = tokenHandler.CreateToken(tokenDescriptor);
+
+    return tokenHandler.WriteToken(token);
+}
+
 
         public string CreateRefreshToken()
         {
