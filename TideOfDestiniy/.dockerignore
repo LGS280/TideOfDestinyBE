@@ -6,11 +6,3 @@
 **/.vscode
 **/bin/
 **/obj/
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
-TestResults/
-[Tt]est[Rr]esult*/
-*.csproj.user
-*.csproj.vspscc
