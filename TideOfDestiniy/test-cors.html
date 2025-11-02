@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test for Tide of Destiny API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 CORS Test Tool</h1>
+        <p>Test if CORS is properly configured for your API</p>
+        
+        <div class="test-section">
+            <h3>API Configuration</h3>
+            <label>API Base URL:</label>
+            <input type="text" id="apiUrl" value="https://tideofdestinybe.onrender.com" placeholder="https://tideofdestinybe.onrender.com">
+            <label>Test Endpoint (relative path):</label>
+            <input type="text" id="endpoint" value="/api/News?category=1" placeholder="/api/News?category=1">
+        </div>
+
+        <div class="test-section">
+            <h3>Test 1: Simple GET Request</h3>
+            <p>Tests a basic GET request from this origin</p>
+            <button onclick="testGetRequest()">Run GET Test</button>
+            <div id="getResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test 2: OPTIONS Preflight Request</h3>
+            <p>Tests the CORS preflight (OPTIONS) request</p>
+            <button onclick="testOptionsRequest()">Run OPTIONS Test</button>
+            <div id="optionsResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test 3: Check CORS Headers</h3>
+            <p>Inspect response headers for CORS configuration</p>
+            <button onclick="checkCorsHeaders()">Check Headers</button>
+            <div id="headersResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Current Origin</h3>
+            <div class="result info">Origin: <strong id="currentOrigin"></strong></div>
+        </div>
+    </div>
+
+    <script>
+        // Display current origin
+        document.getElementById('currentOrigin').textContent = window.location.origin;
+
+        function showResult(elementId, data, isSuccess) {
+            const resultDiv = document.getElementById(elementId);
+            const className = isSuccess ? 'success' : 'error';
+            resultDiv.innerHTML = `<div class="result ${className}">${data}</div>`;
+        }
+
+        async function testGetRequest() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const endpoint = document.getElementById('endpoint').value;
+            const fullUrl = apiUrl + endpoint;
+
+            showResult('getResult', 'Testing...', false);
+
+            try {
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.text();
+                
+                let result = `✅ Request Successful!\n\n`;
+                result += `Status: ${response.status} ${response.statusText}\n\n`;
+                result += `CORS Headers:\n`;
+                result += `  Access-Control-Allow-Origin: ${response.headers.get('Access-Control-Allow-Origin') || 'NOT SET'}\n`;
+                result += `  Access-Control-Allow-Methods: ${response.headers.get('Access-Control-Allow-Methods') || 'NOT SET'}\n`;
+                result += `  Access-Control-Allow-Headers: ${response.headers.get('Access-Control-Allow-Headers') || 'NOT SET'}\n`;
+                result += `  Access-Control-Allow-Credentials: ${response.headers.get('Access-Control-Allow-Credentials') || 'NOT SET'}\n\n`;
+                
+                if (response.headers.get('Access-Control-Allow-Origin')) {
+                    result += `✅ CORS is configured!`;
+                    showResult('getResult', result, true);
+                } else {
+                    result += `❌ CORS headers are missing!`;
+                    showResult('getResult', result, false);
+                }
+            } catch (error) {
+                let errorMsg = `❌ Request Failed!\n\n`;
+                errorMsg += `Error: ${error.message}\n\n`;
+                
+                if (error.message.includes('CORS') || error.message.includes('blocked')) {
+                    errorMsg += `⚠️ This is a CORS error. The server is blocking the request.\n`;
+                    errorMsg += `Check that your API allows origin: ${window.location.origin}`;
+                }
+                
+                showResult('getResult', errorMsg, false);
+            }
+        }
+
+        async function testOptionsRequest() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const endpoint = document.getElementById('endpoint').value;
+            const fullUrl = apiUrl + endpoint;
+
+            showResult('optionsResult', 'Testing OPTIONS request...', false);
+
+            try {
+                const response = await fetch(fullUrl, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+
+                let result = `✅ OPTIONS Preflight Successful!\n\n`;
+                result += `Status: ${response.status} ${response.statusText}\n\n`;
+                result += `CORS Preflight Headers:\n`;
+                result += `  Access-Control-Allow-Origin: ${response.headers.get('Access-Control-Allow-Origin') || 'NOT SET ❌'}\n`;
+                result += `  Access-Control-Allow-Methods: ${response.headers.get('Access-Control-Allow-Methods') || 'NOT SET ❌'}\n`;
+                result += `  Access-Control-Allow-Headers: ${response.headers.get('Access-Control-Allow-Headers') || 'NOT SET ❌'}\n`;
+                result += `  Access-Control-Allow-Credentials: ${response.headers.get('Access-Control-Allow-Credentials') || 'NOT SET'}\n`;
+                result += `  Access-Control-Max-Age: ${response.headers.get('Access-Control-Max-Age') || 'NOT SET'}\n\n`;
+
+                const allowedOrigin = response.headers.get('Access-Control-Allow-Origin');
+                if (allowedOrigin && (allowedOrigin === '*' || allowedOrigin === window.location.origin)) {
+                    result += `✅ Preflight is properly configured!`;
+                    showResult('optionsResult', result, true);
+                } else {
+                    result += `❌ Preflight might not be working correctly!`;
+                    showResult('optionsResult', result, false);
+                }
+            } catch (error) {
+                let errorMsg = `❌ OPTIONS Request Failed!\n\n`;
+                errorMsg += `Error: ${error.message}\n\n`;
+                errorMsg += `This could mean CORS preflight is not working.`;
+                showResult('optionsResult', errorMsg, false);
+            }
+        }
+
+        async function checkCorsHeaders() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const endpoint = document.getElementById('endpoint').value;
+            const fullUrl = apiUrl + endpoint;
+
+            showResult('headersResult', 'Checking headers...', false);
+
+            try {
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Origin': window.location.origin
+                    }
+                });
+
+                let result = `📋 All Response Headers:\n\n`;
+                
+                // Get all headers
+                response.headers.forEach((value, key) => {
+                    if (key.toLowerCase().startsWith('access-control')) {
+                        result += `  ${key}: ${value}\n`;
+                    }
+                });
+
+                result += `\nFull Header List:\n`;
+                response.headers.forEach((value, key) => {
+                    result += `  ${key}: ${value}\n`;
+                });
+
+                const hasCorsHeaders = Array.from(response.headers.keys())
+                    .some(key => key.toLowerCase().startsWith('access-control'));
+                
+                if (hasCorsHeaders) {
+                    result += `\n✅ CORS headers found!`;
+                    showResult('headersResult', result, true);
+                } else {
+                    result += `\n❌ No CORS headers found!`;
+                    showResult('headersResult', result, false);
+                }
+            } catch (error) {
+                showResult('headersResult', `❌ Error: ${error.message}`, false);
+            }
+        }
+    </script>
+</body>
+</html>
+
