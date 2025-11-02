@@ -3,19 +3,12 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy solution file if exists
-COPY ["*.sln", "./"]
-
-# Copy project files for dependency resolution
-COPY ["TideOfDestiniy.API/TideOfDestiniy.API.csproj", "TideOfDestiniy.API/"]
-COPY ["TideOfDestiniy.BLL/TideOfDestiniy.BLL.csproj", "TideOfDestiniy.BLL/"]
-COPY ["TideOfDestiniy.DAL/TideOfDestiniy.DAL.csproj", "TideOfDestiniy.DAL/"]
-
-# Restore dependencies
-RUN dotnet restore "TideOfDestiniy.API/TideOfDestiniy.API.csproj"
-
-# Copy all source files
+# Copy everything at once - more reliable for Render.com
+# This ensures all files are available in the build context
 COPY . .
+
+# Restore dependencies using solution file
+RUN dotnet restore "TideOfDestiniy.sln"
 
 # Build the project
 WORKDIR "/src/TideOfDestiniy.API"
