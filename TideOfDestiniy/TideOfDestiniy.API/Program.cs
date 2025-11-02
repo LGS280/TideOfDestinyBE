@@ -117,20 +117,30 @@ namespace TideOfDestiniy.API
                                           allowedOrigins.AddRange(configOrigins);
                                       }
                                       
-                                      if (allowedOrigins.Any())
+                                      // Use SetIsOriginAllowed for flexible matching (handles trailing slashes, case-insensitive, etc.)
+                                      // This allows more robust origin matching while still supporting credentials
+                                      policy.SetIsOriginAllowed(origin =>
                                       {
-                                          policy.WithOrigins(allowedOrigins.ToArray())
-                                                .AllowAnyHeader()
-                                                .AllowAnyMethod()
-                                                .AllowCredentials(); // Allow credentials for file downloads
-                                      }
-                                      else
-                                      {
-                                          // Fallback for development - allow all origins (cannot use AllowCredentials with AllowAnyOrigin)
-                                          policy.AllowAnyOrigin()
-                                                .AllowAnyHeader()
-                                                .AllowAnyMethod();
-                                      }
+                                          if (string.IsNullOrWhiteSpace(origin))
+                                              return false;
+                                              
+                                          // Normalize origin (remove trailing slash, convert to lowercase for comparison)
+                                          var normalizedOrigin = origin.Trim().TrimEnd('/').ToLowerInvariant();
+                                          
+                                          // Check against all allowed origins (normalized)
+                                          foreach (var allowed in allowedOrigins)
+                                          {
+                                              var normalizedAllowed = allowed.Trim().TrimEnd('/').ToLowerInvariant();
+                                              if (normalizedOrigin == normalizedAllowed)
+                                                  return true;
+                                          }
+                                          
+                                          return false;
+                                      })
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod()
+                                      .AllowCredentials()
+                                      .SetPreflightMaxAge(TimeSpan.FromHours(1)); // Cache preflight for 1 hour
                                   });
                 
                 // Add a separate policy for Swagger UI same-origin requests
