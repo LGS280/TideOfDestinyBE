@@ -104,26 +104,25 @@ namespace TideOfDestiniy.API
                                       var origins = builder.Configuration.GetValue<string>("CorsOrigins");
                                       var allowedOrigins = new List<string>();
                                       
-                                      // Add origins from configuration
+                                      // Always include the production domain first
+                                      var productionDomain = "https://tide-of-destiny-client.vercel.app";
+                                      allowedOrigins.Add(productionDomain);
+                                      
+                                      // Add origins from configuration (avoid duplicates)
                                       if (!string.IsNullOrEmpty(origins))
                                       {
-                                          allowedOrigins.AddRange(origins.Split(',').Select(o => o.Trim()).Where(o => !string.IsNullOrEmpty(o)));
-                                      }
-                                      
-                                      // Always include the production domain
-                                      var productionDomain = "https://tide-of-destiny-client.vercel.app";
-                                      if (!allowedOrigins.Contains(productionDomain))
-                                      {
-                                          allowedOrigins.Add(productionDomain);
+                                          var configOrigins = origins.Split(',')
+                                              .Select(o => o.Trim())
+                                              .Where(o => !string.IsNullOrEmpty(o) && !allowedOrigins.Contains(o));
+                                          allowedOrigins.AddRange(configOrigins);
                                       }
                                       
                                       if (allowedOrigins.Any())
                                       {
-                                          policy.WithOrigins(allowedOrigins.ToArray()) // Tách chuỗi thành mảng các origin
+                                          policy.WithOrigins(allowedOrigins.ToArray())
                                                 .AllowAnyHeader()
                                                 .AllowAnyMethod()
-                                                .AllowCredentials() // Allow credentials for file downloads
-                                                .SetIsOriginAllowedToAllowWildcardSubdomains(); // Allow subdomains
+                                                .AllowCredentials(); // Allow credentials for file downloads
                                       }
                                       else
                                       {
@@ -234,6 +233,9 @@ namespace TideOfDestiniy.API
             }
 
             // Configure the HTTP request pipeline.
+            // IMPORTANT: CORS must be very early in the pipeline, before routing
+            app.UseCors(MyAllowSpecificOrigins);
+            
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -242,9 +244,7 @@ namespace TideOfDestiniy.API
 
             //app.UseHttpsRedirection();
 
-            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
-
             app.UseAuthorization();
 
 
