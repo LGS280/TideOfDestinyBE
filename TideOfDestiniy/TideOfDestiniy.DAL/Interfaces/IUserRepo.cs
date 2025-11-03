@@ -17,6 +17,10 @@ namespace TideOfDestiniy.DAL.Interfaces
         Task<User> CreateUserAsync(User user);
         Task<bool> UpdateUserAsync(User user);
 
+        Task<Role?> GetRoleByNameAsync(string roleName);
+        Task AssignRoleToUserAsync(Guid userId, int roleId);
+        Task<User?> GetUserByIdWithRolesAsync(Guid userId);
+
 
     }
 }

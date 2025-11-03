@@ -107,5 +107,32 @@ namespace TideOfDestiniy.DAL.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<Role?> GetRoleByNameAsync(string roleName)
+        {
+            return await _context.Roles
+                .FirstOrDefaultAsync(r => r.RoleName == roleName);
+        }
+
+        public async Task AssignRoleToUserAsync(Guid userId, int roleId)
+        {
+            await _context.UserRoles.AddAsync(new UserRole
+            {
+                UserId = userId,
+                RoleId = roleId
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task<User?> GetUserByIdWithRolesAsync(Guid userId)
+        {
+            return await _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
+
     }
 }

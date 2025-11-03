@@ -1,25 +1,25 @@
-﻿using Google.Apis.Auth;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using TideOfDestiniy.BLL.DTOs.Responses; // Thêm using
-using TideOfDestiniy.BLL.Interfaces;
-using TideOfDestiniy.DAL.Entities;
-using TideOfDestiniy.DAL.Interfaces;
-using TideOfDestiniy.DAL.Repositories;
+﻿    using Google.Apis.Auth;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.Tokens;
+    using System;
+    using System.Collections.Generic;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Linq;
+    using System.Net;
+    using System.Security.Claims;
+    using System.Security.Cryptography;
+    using System.Text;
+    using System.Threading.Tasks;
+    using TideOfDestiniy.BLL.DTOs.Responses; // Thêm using
+    using TideOfDestiniy.BLL.Interfaces;
+    using TideOfDestiniy.DAL.Entities;
+    using TideOfDestiniy.DAL.Interfaces;
+    using TideOfDestiniy.DAL.Repositories;
 
 
-namespace TideOfDestiniy.BLL.Services
-{
+    namespace TideOfDestiniy.BLL.Services
+    {
     public class Authorization : IAuthorization, IAuthService
     {
         private IConfiguration _configuration;
@@ -37,12 +37,12 @@ namespace TideOfDestiniy.BLL.Services
 
             // Tạo danh sách các "claims" (thông tin định danh) cho người dùng
             var claims = new List<Claim>
-            {
-                //new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Subject = User ID
-                new Claim(JwtRegisteredClaimNames.Name, user.Username), // Name = Username
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // JWT ID, unique cho mỗi token
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) //     
-            };
+                {
+                    //new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Subject = User ID
+                    new Claim(JwtRegisteredClaimNames.Name, user.Username), // Name = Username
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // JWT ID, unique cho mỗi token
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) //     
+                };
 
             // Thêm các role của người dùng vào claims
             // Quan trọng: Đảm bảo user object đã được load kèm UserRoles.Role
@@ -129,10 +129,21 @@ namespace TideOfDestiniy.BLL.Services
 
                         // Không có PasswordHash vì họ đăng nhập qua Google
                     };
+
                     user = await _userRepo.CreateUserAsync(user); // Cần tạo hàm này trong Repo
+
+                    // ✅ Gán quyền User cho user mới
+                    var defaultRole = await _userRepo.GetRoleByNameAsync("User");
+                    if (defaultRole != null)
+                    {
+                        await _userRepo.AssignRoleToUserAsync(user.Id, defaultRole.Id);
+                    }
                 }
 
-                // Bước 3: Tạo token của hệ thống bạn và trả về
+                // ✅ Load lại user kèm Role (bắt buộc)
+                user = await _userRepo.GetUserByIdWithRolesAsync(user.Id);
+
+                // ✅ Token sẽ có Role claim
                 var accessToken = CreateAccessToken(user);
                 var refreshToken = CreateRefreshToken();
 
@@ -147,7 +158,7 @@ namespace TideOfDestiniy.BLL.Services
                     Token = accessToken,
                 };
             }
-            catch (InvalidJwtException ex)
+            catch (InvalidJwtException)
             {
                 // Token không hợp lệ
                 return new AuthResultDTO { Succeeded = false, Message = "Invalid Google token." };
@@ -159,4 +170,4 @@ namespace TideOfDestiniy.BLL.Services
             }
         }
     }
-}
+    }
