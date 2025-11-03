@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Google.Apis.Auth;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -9,12 +11,11 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using TideOfDestiniy.BLL.DTOs.Responses; // Thêm using
 using TideOfDestiniy.BLL.Interfaces;
 using TideOfDestiniy.DAL.Entities;
 using TideOfDestiniy.DAL.Interfaces;
 using TideOfDestiniy.DAL.Repositories;
-using Google.Apis.Auth;
-using TideOfDestiniy.BLL.DTOs.Responses; // Thêm using
 
 
 namespace TideOfDestiniy.BLL.Services
@@ -23,11 +24,12 @@ namespace TideOfDestiniy.BLL.Services
     {
         private IConfiguration _configuration;
         private IUserRepo _userRepo;
-
-        public Authorization(IConfiguration configuration, IUserRepo userRepo)
+        private readonly ILogger<Authorization> _logger;
+        public Authorization(IConfiguration configuration, IUserRepo userRepo, ILogger<Authorization> logger)
         {
             _configuration = configuration;
             _userRepo = userRepo;
+            _logger = logger;
         }
         public string CreateAccessToken(User user)
         {
@@ -57,6 +59,7 @@ namespace TideOfDestiniy.BLL.Services
 
             // Lấy thời gian hết hạn từ config
             var tokenExpiration = DateTime.UtcNow.AddHours(Convert.ToDouble(_configuration["JwtSettings:AccessTokenExpirationHours"]));
+            _logger.LogInformation("--- DIAGNOSTIC JWT LOG --- Value for 'JwtSettings:AccessTokenExpirationHours' is: [{value}]", tokenExpiration);
 
             // Tạo token descriptor (bản thiết kế cho token)
             var tokenDescriptor = new SecurityTokenDescriptor
