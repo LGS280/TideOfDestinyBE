@@ -58,14 +58,24 @@ namespace TideOfDestiniy.BLL.Services
             var creds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256Signature);
 
             // Lấy thời gian hết hạn từ config
-            var tokenExpiration = DateTime.UtcNow.AddHours(Convert.ToDouble(_configuration["JwtSettings:AccessTokenExpirationHours"]));
-            _logger.LogInformation("--- DIAGNOSTIC JWT LOG --- Value for 'JwtSettings:AccessTokenExpirationHours' is: [{value}]", tokenExpiration);
+            //var tokenExpiration = DateTime.UtcNow.AddHours(Convert.ToDouble(_configuration["JwtSettings:AccessTokenExpirationHours"]));
+            //var tokenExpiration = _configuration["JwtSettings:AccessTokenExpirationHours"];
+            //_logger.LogInformation("--- DIAGNOSTIC JWT LOG --- Value for 'JwtSettings:AccessTokenExpirationHours' is: [{value}]", tokenExpiration);
+
+            // Bước 1: Đọc giá trị THÔ (raw value) từ config vào một biến kiểu string.
+            var expirationValueFromConfig = _configuration["JwtSettings:AccessTokenExpirationHours"];
+
+            // Bước 2: Ghi log giá trị THÔ này để chẩn đoán.
+            _logger.LogInformation("--- DIAGNOSTIC JWT LOG --- Raw value from config is: [{value}]", expirationValueFromConfig);
+
+            // Bước 3: Chuyển đổi giá trị thô và tính toán ra thời gian hết hạn cuối cùng.
+            var finalTokenExpiration = DateTime.UtcNow.AddHours(Convert.ToDouble(expirationValueFromConfig));
 
             // Tạo token descriptor (bản thiết kế cho token)
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = tokenExpiration,
+                Expires = finalTokenExpiration,
                 SigningCredentials = creds,
                 Issuer = _configuration["JwtSettings:Issuer"],
                 Audience = _configuration["JwtSettings:Audience"]
