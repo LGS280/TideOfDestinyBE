@@ -91,7 +91,7 @@ namespace TideOfDestiniy.BLL.Services
             return response.ResponseStream;
         }
 
-        public async Task<(byte[] FileBytes, string FileName, string ContentType)> DownloadLatestFileAsync()
+        public async Task<(Stream FileStream, string FileName, string ContentType)> DownloadLatestFileAsync()
         {
             var listRequest = new ListObjectsV2Request
             {
@@ -112,15 +112,11 @@ namespace TideOfDestiniy.BLL.Services
                 Key = latestFile.Key
             };
 
-            using (var getResponse = await _s3Client.GetObjectAsync(getRequest))
-            using (var memoryStream = new MemoryStream())
-            {
-                await getResponse.ResponseStream.CopyToAsync(memoryStream);
-                return (memoryStream.ToArray(),
-                        Path.GetFileName(latestFile.Key),
-                        getResponse.Headers.ContentType ?? "application/octet-stream"
-                        );
-            }
+            var getResponse = await _s3Client.GetObjectAsync(getRequest);
+            
+            return (getResponse.ResponseStream,
+                    Path.GetFileName(latestFile.Key),
+                    getResponse.Headers.ContentType ?? "application/octet-stream");
         }
     }
 }
