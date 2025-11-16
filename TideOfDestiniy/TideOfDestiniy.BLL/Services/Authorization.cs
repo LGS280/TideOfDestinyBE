@@ -1,33 +1,35 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using TideOfDestiniy.BLL.Interfaces;
-using TideOfDestiniy.DAL.Entities;
-using TideOfDestiniy.DAL.Interfaces;
-using TideOfDestiniy.DAL.Repositories;
-using Google.Apis.Auth;
-using TideOfDestiniy.BLL.DTOs.Responses; // Thêm using
+﻿    using Google.Apis.Auth;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.Tokens;
+    using System;
+    using System.Collections.Generic;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Linq;
+    using System.Net;
+    using System.Security.Claims;
+    using System.Security.Cryptography;
+    using System.Text;
+    using System.Threading.Tasks;
+    using TideOfDestiniy.BLL.DTOs.Responses; // Thêm using
+    using TideOfDestiniy.BLL.Interfaces;
+    using TideOfDestiniy.DAL.Entities;
+    using TideOfDestiniy.DAL.Interfaces;
+    using TideOfDestiniy.DAL.Repositories;
 
 
-namespace TideOfDestiniy.BLL.Services
-{
+    namespace TideOfDestiniy.BLL.Services
+    {
     public class Authorization : IAuthorization, IAuthService
     {
         private IConfiguration _configuration;
         private IUserRepo _userRepo;
-
-        public Authorization(IConfiguration configuration, IUserRepo userRepo)
+        private readonly ILogger<Authorization> _logger;
+        public Authorization(IConfiguration configuration, IUserRepo userRepo, ILogger<Authorization> logger)
         {
             _configuration = configuration;
             _userRepo = userRepo;
+            _logger = logger;
         }
         public string CreateAccessToken(User user)
         {
@@ -35,12 +37,12 @@ namespace TideOfDestiniy.BLL.Services
 
             // Tạo danh sách các "claims" (thông tin định danh) cho người dùng
             var claims = new List<Claim>
-            {
-                //new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Subject = User ID
-                new Claim(JwtRegisteredClaimNames.Name, user.Username), // Name = Username
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // JWT ID, unique cho mỗi token
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) //     
-            };
+                {
+                    //new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Subject = User ID
+                    new Claim(JwtRegisteredClaimNames.Name, user.Username), // Name = Username
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // JWT ID, unique cho mỗi token
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) //     
+                };
 
             // Thêm các role của người dùng vào claims
             // Quan trọng: Đảm bảo user object đã được load kèm UserRoles.Role
@@ -56,13 +58,24 @@ namespace TideOfDestiniy.BLL.Services
             var creds = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256Signature);
 
             // Lấy thời gian hết hạn từ config
-            var tokenExpiration = DateTime.UtcNow.AddHours(Convert.ToDouble(_configuration["JwtSettings:AccessTokenExpirationHours"]));
+            //var tokenExpiration = DateTime.UtcNow.AddHours(Convert.ToDouble(_configuration["JwtSettings:AccessTokenExpirationHours"]));
+            //var tokenExpiration = _configuration["JwtSettings:AccessTokenExpirationHours"];
+            //_logger.LogInformation("--- DIAGNOSTIC JWT LOG --- Value for 'JwtSettings:AccessTokenExpirationHours' is: [{value}]", tokenExpiration);
+
+            // Bước 1: Đọc giá trị THÔ (raw value) từ config vào một biến kiểu string.
+            var expirationValueFromConfig = _configuration["JwtSettings:AccessTokenExpirationHours"];
+
+            // Bước 2: Ghi log giá trị THÔ này để chẩn đoán.
+            _logger.LogInformation("--- DIAGNOSTIC JWT LOG --- Raw value from config is: [{value}]", expirationValueFromConfig);
+
+            // Bước 3: Chuyển đổi giá trị thô và tính toán ra thời gian hết hạn cuối cùng.
+            var finalTokenExpiration = DateTime.UtcNow.AddHours(Convert.ToDouble(expirationValueFromConfig));
 
             // Tạo token descriptor (bản thiết kế cho token)
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = tokenExpiration,
+                Expires = finalTokenExpiration,
                 SigningCredentials = creds,
                 Issuer = _configuration["JwtSettings:Issuer"],
                 Audience = _configuration["JwtSettings:Audience"]
@@ -116,10 +129,21 @@ namespace TideOfDestiniy.BLL.Services
 
                         // Không có PasswordHash vì họ đăng nhập qua Google
                     };
+
                     user = await _userRepo.CreateUserAsync(user); // Cần tạo hàm này trong Repo
+
+                    // ✅ Gán quyền User cho user mới
+                    var defaultRole = await _userRepo.GetRoleByNameAsync("User");
+                    if (defaultRole != null)
+                    {
+                        await _userRepo.AssignRoleToUserAsync(user.Id, defaultRole.Id);
+                    }
                 }
 
-                // Bước 3: Tạo token của hệ thống bạn và trả về
+                // ✅ Load lại user kèm Role (bắt buộc)
+                user = await _userRepo.GetUserByIdWithRolesAsync(user.Id);
+
+                // ✅ Token sẽ có Role claim
                 var accessToken = CreateAccessToken(user);
                 var refreshToken = CreateRefreshToken();
 
@@ -134,7 +158,7 @@ namespace TideOfDestiniy.BLL.Services
                     Token = accessToken,
                 };
             }
-            catch (InvalidJwtException ex)
+            catch (InvalidJwtException)
             {
                 // Token không hợp lệ
                 return new AuthResultDTO { Succeeded = false, Message = "Invalid Google token." };
@@ -146,4 +170,4 @@ namespace TideOfDestiniy.BLL.Services
             }
         }
     }
-}
+    }
