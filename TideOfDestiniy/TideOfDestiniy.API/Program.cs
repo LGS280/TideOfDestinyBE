@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Text;
 using TideOfDestiniy.BLL.Hubs;
 using TideOfDestiniy.BLL.Interfaces;
@@ -72,8 +74,9 @@ namespace TideOfDestiniy.API
             builder.Services.AddScoped<IPhotoService, PhotoService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IProductService, ProductService>();
-            builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
 
             //Add Repositories
@@ -100,17 +103,39 @@ namespace TideOfDestiniy.API
                                   policy =>
                                   {
                                       var origins = builder.Configuration.GetValue<string>("CorsOrigins");
+                                      var allowedOrigins = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                                      
+                                      // Always include the production domain - this is critical
+                                      var productionDomain = "https://tide-of-destiny-client.vercel.app";
+                                      allowedOrigins.Add(productionDomain);
+                                      
+                                      // Add origins from configuration (avoid duplicates)
                                       if (!string.IsNullOrEmpty(origins))
                                       {
-                                          policy.WithOrigins(origins.Split(',')) // Tách chuỗi thành mảng các origin
+                                          var configOrigins = origins.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                              .Select(o => o.Trim())
+                                              .Where(o => !string.IsNullOrEmpty(o));
+                                          foreach (var origin in configOrigins)
+                                          {
+                                              allowedOrigins.Add(origin);
+                                          }
+                                      }
+                                      
+                                      // Convert to array for WithOrigins (most reliable method with AllowCredentials)
+                                      var originsArray = allowedOrigins.ToArray();
+                                      
+                                      if (originsArray.Length > 0)
+                                      {
+                                          // Use WithOrigins directly - most reliable with AllowCredentials
+                                          policy.WithOrigins(originsArray)
                                                 .AllowAnyHeader()
                                                 .AllowAnyMethod()
-                                                .AllowCredentials() // Allow credentials for file downloads
-                                                .SetIsOriginAllowedToAllowWildcardSubdomains(); // Allow subdomains
+                                                .AllowCredentials() // Required for cookies/auth
+                                                .SetPreflightMaxAge(TimeSpan.FromHours(1));
                                       }
                                       else
                                       {
-                                          // Fallback for development - allow all origins (cannot use AllowCredentials with AllowAnyOrigin)
+                                          // Fallback - should not happen but safety net
                                           policy.AllowAnyOrigin()
                                                 .AllowAnyHeader()
                                                 .AllowAnyMethod();
@@ -217,8 +242,15 @@ namespace TideOfDestiniy.API
             }
 
             // Configure the HTTP request pipeline.
+            // IMPORTANT: CORS must be very early in the pipeline, before routing
+            app.UseCors(MyAllowSpecificOrigins);
+            
             if (app.Environment.IsDevelopment())
             {
+
+            }
+            app.UseSwagger();
+            app.UseSwaggerUI();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
@@ -232,9 +264,7 @@ namespace TideOfDestiniy.API
 
             //app.UseHttpsRedirection();
 
-            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
-
             app.UseAuthorization();
 
 

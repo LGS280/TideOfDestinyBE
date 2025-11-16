@@ -41,8 +41,8 @@ namespace TideOfDestiniy.API.Controllers
                 return BadRequest(new { message = result.Message });
             }
 
-            // Return the token for testing purposes
-            return Ok(new { message = result.Message, token = result.Token });
+            // Don't return token in response for security - it's sent via email
+            return Ok(new { message = result.Message });
         }
 
         [HttpPost("reset-password")]
