@@ -34,8 +34,9 @@ namespace TideOfDestiniy.API.Controllers
 
             try
             {
-                var checkoutUrl = await _paymentService.CreatePaymentLink(userId, requestDto.ReturnUrl, requestDto.CancelUrl);
+                var checkoutUrl = await _paymentService.CreatePaymentLink(userId, requestDto.ProductId, requestDto.ReturnUrl, requestDto.CancelUrl);
                 return Ok(new { CheckoutUrl = checkoutUrl });
+
             }
             catch (InvalidOperationException ex)
             {

@@ -16,5 +16,7 @@ namespace TideOfDestiniy.BLL.DTOs.Requests
         [Required]
         [Range(0, (double)decimal.MaxValue)]
         public decimal Price { get; set; }
-    }
+
+        public bool IsActive { get; set; } = false;
+        }
 }

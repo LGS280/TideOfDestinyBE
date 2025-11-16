@@ -60,5 +60,10 @@ namespace TideOfDestiniy.DAL.Repositories
         {
             return await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Product>> GetActiveProductsAsync()
+        {
+            return await _context.Products.Where(p => p.IsActive).ToListAsync();
+        }
     }
 }

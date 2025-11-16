@@ -35,11 +35,21 @@ namespace TideOfDestiniy.BLL.Services
             _userRepo = userRepo;
             _productRepo = productRepo;
         }
-        public async Task<string> CreatePaymentLink(Guid userId, string returnUrl, string cancelUrl)
+        public async Task<string> CreatePaymentLink(Guid userId, Guid productId, string returnUrl, string cancelUrl)
         {
             if (await _orderRepo.HasUserPurchasedGameAsync(userId))
             {
                 throw new InvalidOperationException("You have already purchased this game.");
+            }
+
+            var productToPurchase = await _productRepo.GetByIdAsync(productId);
+            if (productToPurchase == null)
+            {
+                throw new KeyNotFoundException("Product not found.");
+            }
+            if (!productToPurchase.IsActive)
+            {
+                throw new InvalidOperationException("This product is not currently available for purchase.");
             }
 
             var gameProduct = await _productRepo.GetMainGameProductAsync();
